@@ -8,13 +8,13 @@ import {
   Eye,
   BarChart3
 } from 'lucide-react';
-import Card, { CardHeader, CardBody } from '../components/common/Card';
-import Button from '../components/common/Button';
 import Loading from '../components/common/Loading';
 import ErrorMessage from '../components/common/ErrorMessage';
 import { formatDate, formatCurrency } from '../utils/formatters';
 import { useRFPs } from '../hooks/useRFPs';
 import { useVendors } from '../hooks/useVendors';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader } from '@/components/ui/card';
 
 const Dashboard: React.FC = () => {
   const { data: rfpsData, isLoading: rfpsLoading, error: rfpsError } = useRFPs();
@@ -60,7 +60,7 @@ const Dashboard: React.FC = () => {
         </div>
         <div className="flex space-x-3">
           <Link to="/rfps/create">
-            <Button variant="primary" size="sm">
+            <Button variant="default" size="sm">
               <Plus className="h-4 w-4 mr-2" />
               Create RFP
             </Button>
@@ -77,33 +77,33 @@ const Dashboard: React.FC = () => {
       {/* Statistics Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         <Card>
-          <CardBody className="text-center">
+          <CardContent className="text-center">
             <div className="flex items-center justify-center w-12 h-12 bg-blue-100 rounded-lg mx-auto mb-3">
               <FileText className="h-6 w-6 text-blue-600" />
             </div>
             <div className="text-2xl font-bold text-gray-900">{totalRFPs}</div>
             <p className="text-sm text-gray-600">Total RFPs</p>
-          </CardBody>
+          </CardContent>
         </Card>
 
         <Card>
-          <CardBody className="text-center">
+          <CardContent className="text-center">
             <div className="flex items-center justify-center w-12 h-12 bg-green-100 rounded-lg mx-auto mb-3">
               <MessageSquare className="h-6 w-6 text-green-600" />
             </div>
             <div className="text-2xl font-bold text-gray-900">{sentRFPs}</div>
             <p className="text-sm text-gray-600">RFPs Sent</p>
-          </CardBody>
+          </CardContent>
         </Card>
 
         <Card>
-          <CardBody className="text-center">
+          <CardContent className="text-center">
             <div className="flex items-center justify-center w-12 h-12 bg-purple-100 rounded-lg mx-auto mb-3">
               <Users className="h-6 w-6 text-purple-600" />
             </div>
             <div className="text-2xl font-bold text-gray-900">{totalVendors}</div>
             <p className="text-sm text-gray-600">Total Vendors</p>
-          </CardBody>
+          </CardContent>
         </Card>
       </div>
 
@@ -117,14 +117,14 @@ const Dashboard: React.FC = () => {
             </Link>
           </div>
         </CardHeader>
-        <CardBody>
+        <CardContent>
           {recentRFPs.length === 0 ? (
             <div className="text-center py-8">
               <FileText className="h-12 w-12 text-gray-400 mx-auto mb-4" />
               <h3 className="text-lg font-medium text-gray-900 mb-2">No RFPs yet</h3>
               <p className="text-gray-600 mb-4">Create your first RFP to get started</p>
               <Link to="/rfps/create">
-                <Button variant="primary">
+                <Button variant="default">
                   <Plus className="h-4 w-4 mr-2" />
                   Create RFP
                 </Button>
@@ -159,7 +159,7 @@ const Dashboard: React.FC = () => {
               ))}
             </div>
           )}
-        </CardBody>
+        </CardContent>
       </Card>
 
       {/* Quick Actions */}
@@ -167,7 +167,7 @@ const Dashboard: React.FC = () => {
         <CardHeader>
           <h2 className="text-lg font-semibold text-gray-900">Quick Actions</h2>
         </CardHeader>
-        <CardBody>
+        <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <Link to="/rfps/create">
               <div className="p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors cursor-pointer">
@@ -198,7 +198,7 @@ const Dashboard: React.FC = () => {
             </Link>
 
           </div>
-        </CardBody>
+        </CardContent>
       </Card>
     </div>
   );

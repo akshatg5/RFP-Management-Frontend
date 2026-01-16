@@ -1,13 +1,13 @@
 import React from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { ArrowLeft, Trophy } from 'lucide-react';
-import Card, { CardHeader, CardBody } from '../components/common/Card';
-import Button from '../components/common/Button';
 import Loading from '../components/common/Loading';
 import ErrorMessage from '../components/common/ErrorMessage';
-import Badge from '../components/common/Badge';
 import { useProposalComparison } from '../hooks/useProposals';
 import { formatCurrency, getScoreColor, formatScore } from '../utils/formatters';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
 
 const ComparisonPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -57,7 +57,7 @@ const ComparisonPage: React.FC = () => {
 
         {/* No Proposals Message */}
         <Card>
-          <CardBody className="text-center py-12">
+          <div className="text-center py-12">
             <Trophy className="h-16 w-16 text-gray-300 mx-auto mb-4" />
             <h3 className="text-lg font-medium text-gray-900 mb-2">No Proposals to Compare</h3>
             <p className="text-gray-600 mb-6">
@@ -65,11 +65,11 @@ const ComparisonPage: React.FC = () => {
               you can compare them here and get AI-powered recommendations.
             </p>
             <Link to={`/rfps/${id}`}>
-              <Button variant="primary">
+              <Button variant="default">
                 Back to RFP Details
               </Button>
             </Link>
-          </CardBody>
+          </div>
         </Card>
       </div>
     );
@@ -105,7 +105,7 @@ const ComparisonPage: React.FC = () => {
               AI Recommendation
             </h2>
           </CardHeader>
-          <CardBody>
+          <CardContent>
             <div className="space-y-4">
               <div className="flex items-start space-x-4">
                 <div className="flex-shrink-0">
@@ -128,7 +128,7 @@ const ComparisonPage: React.FC = () => {
                 </div>
               </div>
             </div>
-          </CardBody>
+          </CardContent>
         </Card>
       ) : (
         <Card className="border-yellow-200 bg-yellow-50">
@@ -138,7 +138,7 @@ const ComparisonPage: React.FC = () => {
               AI Recommendation Unavailable
             </h2>
           </CardHeader>
-          <CardBody>
+          <CardContent>
             <div className="space-y-4">
               <div className="flex items-start space-x-4">
                 <div className="flex-shrink-0">
@@ -153,7 +153,7 @@ const ComparisonPage: React.FC = () => {
                 </div>
               </div>
             </div>
-          </CardBody>
+          </CardContent>
         </Card>
       )}
 
@@ -162,7 +162,7 @@ const ComparisonPage: React.FC = () => {
         <CardHeader>
           <h2 className="text-lg font-semibold text-gray-900">Detailed Comparison</h2>
         </CardHeader>
-        <CardBody>
+        <CardContent>
           <div className="overflow-x-auto">
             <table className="min-w-full divide-y divide-gray-200">
               <thead className="bg-gray-50">
@@ -248,7 +248,7 @@ const ComparisonPage: React.FC = () => {
               </tbody>
             </table>
           </div>
-        </CardBody>
+        </CardContent>
       </Card>
 
       {/* Score Visualization */}
@@ -256,7 +256,7 @@ const ComparisonPage: React.FC = () => {
         <CardHeader>
           <h2 className="text-lg font-semibold text-gray-900">Score Visualization</h2>
         </CardHeader>
-        <CardBody>
+        <CardContent>
           <div className="space-y-4">
             {sortedProposals.map((proposal) => (
               <div key={proposal.id} className="flex items-center space-x-4">
@@ -282,7 +282,7 @@ const ComparisonPage: React.FC = () => {
                         </div>
                       </div>
                 {aiRecommendation && aiRecommendation.recommendedVendorId === proposal.id && (
-                  <Badge variant="success" className="flex-shrink-0">
+                  <Badge variant="default" className="flex-shrink-0">
                     <Trophy className="h-3 w-3 mr-1" />
                     Recommended
                   </Badge>
@@ -290,7 +290,7 @@ const ComparisonPage: React.FC = () => {
               </div>
             ))}
           </div>
-        </CardBody>
+        </CardContent>
       </Card>
 
       {/* Action Buttons */}
@@ -300,7 +300,7 @@ const ComparisonPage: React.FC = () => {
             Back to RFP Details
           </Button>
         </Link>
-        <Button variant="primary">
+        <Button variant="default">
           Export Comparison
         </Button>
       </div>

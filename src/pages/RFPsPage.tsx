@@ -12,13 +12,13 @@ import {
   DollarSign,
   Users
 } from 'lucide-react';
-import Card, { CardBody } from '../components/common/Card';
-import Button from '../components/common/Button';
 import Loading from '../components/common/Loading';
 import ErrorMessage from '../components/common/ErrorMessage';
-import Badge from '../components/common/Badge';
 import { useRFPs, useDeleteRFP } from '../hooks/useRFPs';
 import { formatDate, formatCurrency } from '../utils/formatters';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
 
 const RFPsPage: React.FC = () => {
   const { data: rfpsData, isLoading, error, refetch } = useRFPs();
@@ -77,7 +77,7 @@ const RFPsPage: React.FC = () => {
           <p className="text-gray-600 mt-1">Manage your Request for Proposals</p>
         </div>
         <Link to="/rfps/create">
-          <Button variant="primary">
+          <Button variant="default">
             <Plus className="h-4 w-4 mr-2" />
             Create RFP
           </Button>
@@ -86,7 +86,7 @@ const RFPsPage: React.FC = () => {
 
       {/* Search and Filters */}
       <Card>
-        <CardBody>
+        <CardContent>
           <div className="flex flex-col sm:flex-row gap-4">
             <div className="flex-1 relative">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
@@ -111,14 +111,14 @@ const RFPsPage: React.FC = () => {
               </select>
             </div>
           </div>
-        </CardBody>
+        </CardContent>
       </Card>
 
       {/* RFPs List */}
       <div className="space-y-4">
         {filteredRFPs.length === 0 ? (
           <Card>
-            <CardBody className="text-center py-12">
+            <CardContent className="text-center py-12">
               <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
                 <Search className="h-8 w-8 text-gray-400" />
               </div>
@@ -132,17 +132,17 @@ const RFPsPage: React.FC = () => {
                 }
               </p>
               <Link to="/rfps/create">
-                <Button variant="primary">
+                <Button variant="default">
                   <Plus className="h-4 w-4 mr-2" />
                   Create RFP
                 </Button>
               </Link>
-            </CardBody>
+            </CardContent>
           </Card>
         ) : (
           filteredRFPs.map((rfp) => (
             <Card key={rfp.id}>
-              <CardBody>
+              <CardContent>
                 <div className="flex items-start justify-between">
                   <div className="flex-1">
                     <div className="flex items-start justify-between mb-2">
@@ -193,16 +193,15 @@ const RFPsPage: React.FC = () => {
                     </Button>
                   </div>
                   <Button
-                    variant="danger"
+                    variant="destructive"
                     size="sm"
                     onClick={() => handleDelete(rfp.id)}
-                    loading={deleteRFP.isPending}
                   >
                     <Trash2 className="h-4 w-4 mr-1" />
                     Delete
                   </Button>
                 </div>
-              </CardBody>
+              </CardContent>
             </Card>
           ))
         )}

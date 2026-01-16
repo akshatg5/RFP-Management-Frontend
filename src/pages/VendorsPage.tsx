@@ -8,14 +8,14 @@ import {
   Building,
   User
 } from 'lucide-react';
-import Card, { CardHeader, CardBody } from '../components/common/Card';
-import Button from '../components/common/Button';
 import Loading from '../components/common/Loading';
 import ErrorMessage from '../components/common/ErrorMessage';
 import { useVendors, useDeleteVendor, useCreateVendor, useUpdateVendor } from '../hooks/useVendors';
 import { formatDate } from '../utils/formatters';
 import { validateVendorData } from '../utils/validators';
 import { CreateVendorRequest, Vendor } from '../types/vendor.types';
+import { Card, CardContent, CardHeader } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
 
 const VendorsPage: React.FC = () => {
   const { data: vendorsData, isLoading, error, refetch } = useVendors();
@@ -127,7 +127,7 @@ const VendorsPage: React.FC = () => {
           <p className="text-gray-600 mt-1">Manage your vendor contacts and information</p>
         </div>
         <Button
-          variant="primary"
+          variant="default"
           onClick={() => {
             setEditingVendor(null);
             setShowForm(!showForm);
@@ -146,7 +146,7 @@ const VendorsPage: React.FC = () => {
               {editingVendor ? 'Edit Vendor' : 'Add New Vendor'}
             </h2>
           </CardHeader>
-          <CardBody>
+          <CardContent>
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
@@ -200,10 +200,7 @@ const VendorsPage: React.FC = () => {
               )}
 
               <div className="flex space-x-3">
-                <Button
-                  type="submit"
-                  loading={editingVendor ? updateVendor.isPending : createVendor.isPending}
-                >
+                <Button type="submit" >
                   {editingVendor ? 'Update Vendor' : 'Add Vendor'}
                 </Button>
                 <Button
@@ -215,13 +212,13 @@ const VendorsPage: React.FC = () => {
                 </Button>
               </div>
             </form>
-          </CardBody>
+          </CardContent>
         </Card>
       )}
 
       {/* Search */}
       <Card>
-        <CardBody>
+        <CardContent>
           <div className="relative">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
             <input
@@ -232,14 +229,14 @@ const VendorsPage: React.FC = () => {
               className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             />
           </div>
-        </CardBody>
+        </CardContent>
       </Card>
 
       {/* Vendors List */}
       <div className="space-y-4">
         {filteredVendors.length === 0 ? (
           <Card>
-            <CardBody className="text-center py-12">
+            <CardContent className="text-center py-12">
               <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
                 <Building className="h-8 w-8 text-gray-400" />
               </div>
@@ -253,18 +250,18 @@ const VendorsPage: React.FC = () => {
                 }
               </p>
               <Button
-                variant="primary"
+                variant="default"
                 onClick={() => setShowForm(true)}
               >
                 <Plus className="h-4 w-4 mr-2" />
                 Add Vendor
               </Button>
-            </CardBody>
+            </CardContent>
           </Card>
         ) : (
           filteredVendors.map((vendor) => (
             <Card key={vendor.id}>
-              <CardBody>
+              <CardContent>
                 <div className="flex items-start justify-between">
                   <div className="flex items-start space-x-3 flex-1">
                     <div className="flex items-center justify-center w-10 h-10 bg-blue-100 rounded-lg">
@@ -297,17 +294,15 @@ const VendorsPage: React.FC = () => {
                       Edit
                     </Button>
                     <Button
-                      variant="danger"
                       size="sm"
                       onClick={() => handleDelete(vendor.id)}
-                      loading={deleteVendor.isPending}
                     >
                       <Trash2 className="h-4 w-4 mr-1" />
                       Delete
                     </Button>
                   </div>
                 </div>
-              </CardBody>
+              </CardContent>
             </Card>
           ))
         )}

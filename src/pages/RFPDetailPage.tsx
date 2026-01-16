@@ -1,16 +1,16 @@
 import React, { useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { ArrowLeft, Send, BarChart3, FileText, DollarSign, Calendar, Users, Mail, Plus } from 'lucide-react';
-import Card, { CardHeader, CardBody } from '../components/common/Card';
-import Button from '../components/common/Button';
 import Loading from '../components/common/Loading';
 import ErrorMessage from '../components/common/ErrorMessage';
-import Badge from '../components/common/Badge';
 import SendRFPModal from '../components/rfp/SendRFPModal';
 import ManualProposalForm from '../components/proposal/ManualProposalForm';
 import { useRFPWithVendors } from '../hooks/useRFPs';
 import { useProposals as useProposalData } from '../hooks/useProposals';
 import { formatDate, formatCurrency } from '../utils/formatters';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
 
 const RFPDetailPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -75,7 +75,7 @@ const RFPDetailPage: React.FC = () => {
           </Button>
           {proposals.length > 0 && (
             <Link to={`/rfps/${id}/compare`}>
-              <Button variant="primary">
+              <Button variant="default">
                 <BarChart3 className="h-4 w-4 mr-2" />
                 Compare Proposals ({proposals.length})
               </Button>
@@ -89,7 +89,7 @@ const RFPDetailPage: React.FC = () => {
         <CardHeader>
           <h2 className="text-lg font-semibold text-gray-900">RFP Overview</h2>
         </CardHeader>
-        <CardBody>
+        <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
             <div className="text-center">
               <div className="flex items-center justify-center w-12 h-12 bg-blue-100 rounded-lg mx-auto mb-3">
@@ -176,7 +176,7 @@ const RFPDetailPage: React.FC = () => {
               )}
             </div>
           </div>
-        </CardBody>
+        </CardContent>
       </Card>
 
       {/* Vendors Section */}
@@ -184,7 +184,7 @@ const RFPDetailPage: React.FC = () => {
         <CardHeader>
           <h2 className="text-lg font-semibold text-gray-900">Vendors</h2>
         </CardHeader>
-        <CardBody>
+        <CardContent>
           {rfp.vendors && rfp.vendors.length > 0 ? (
             <div className="space-y-3">
               {rfp.vendors.map((vendor) => (
@@ -203,7 +203,7 @@ const RFPDetailPage: React.FC = () => {
                       )}
                     </div>
                   </div>
-                  <Badge variant={vendor.status === 'RESPONDED' ? 'success' : 'secondary'}>
+                  <Badge variant={vendor.status === 'RESPONDED' ? 'default' : 'secondary'}>
                     {vendor.status}
                   </Badge>
                 </div>
@@ -216,7 +216,7 @@ const RFPDetailPage: React.FC = () => {
               <p className="text-gray-600">Send this RFP to vendors to receive proposals</p>
             </div>
           )}
-        </CardBody>
+        </CardContent>
       </Card>
 
       {/* Proposals Section */}
@@ -224,7 +224,7 @@ const RFPDetailPage: React.FC = () => {
         <CardHeader>
           <h2 className="text-lg font-semibold text-gray-900">Proposals Received</h2>
         </CardHeader>
-        <CardBody>
+        <CardContent>
           {proposals.length > 0 ? (
             <div className="space-y-3">
               {proposals.map((proposal) => (
@@ -235,7 +235,7 @@ const RFPDetailPage: React.FC = () => {
                       <span className="text-sm font-medium text-gray-900">
                         Score: {proposal.aiScore}/100
                       </span>
-                      <Badge variant="success">AI Processed</Badge>
+                      <Badge variant="default">AI Processed</Badge>
                     </div>
                   </div>
                   <p className="text-sm text-gray-600 mb-2">
@@ -258,7 +258,7 @@ const RFPDetailPage: React.FC = () => {
               </p>
             </div>
           )}
-        </CardBody>
+        </CardContent>
       </Card>
 
       {/* Send RFP Modal */}

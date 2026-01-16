@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, Wand2, FileText, Save, X } from 'lucide-react';
-import Card, { CardHeader, CardBody } from '../components/common/Card';
-import Button from '../components/common/Button';
 import ErrorMessage from '../components/common/ErrorMessage';
 import { useCreateRFP } from '../hooks/useRFPs';
 import { validateRFPData } from '../utils/validators';
 import { formatCurrency } from '../utils/formatters';
 import { RFP } from '../types/rfp.types';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader } from '@/components/ui/card';
 
 const CreateRFPPage: React.FC = () => {
   const navigate = useNavigate();
@@ -72,7 +72,7 @@ const CreateRFPPage: React.FC = () => {
               Natural Language Input
             </h2>
           </CardHeader>
-          <CardBody>
+          <CardContent>
             <div className="space-y-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -102,7 +102,6 @@ const CreateRFPPage: React.FC = () => {
 
               <Button
                 onClick={handleGenerateRFP}
-                loading={createRFP.isPending}
                 className="w-full"
                 disabled={!naturalLanguagePrompt.trim()}
               >
@@ -110,7 +109,7 @@ const CreateRFPPage: React.FC = () => {
                 {createRFP.isPending ? 'AI is structuring your RFP...' : 'Generate RFP'}
               </Button>
             </div>
-          </CardBody>
+          </CardContent>
         </Card>
 
         {/* Preview Section */}
@@ -121,7 +120,7 @@ const CreateRFPPage: React.FC = () => {
               Structured RFP Preview
             </h2>
           </CardHeader>
-          <CardBody>
+          <CardContent>
             {!generatedRFP ? (
               <div className="text-center py-12">
                 <FileText className="h-16 w-16 text-gray-300 mx-auto mb-4" />
@@ -233,7 +232,7 @@ const CreateRFPPage: React.FC = () => {
                 {/* Action Buttons */}
                 <div className="flex space-x-3 pt-4 border-t border-gray-200">
                   <Button
-                    variant="primary"
+                    variant="default"
                     onClick={handleSaveRFP}
                     className="flex-1"
                   >
@@ -250,7 +249,7 @@ const CreateRFPPage: React.FC = () => {
                 </div>
               </div>
             )}
-          </CardBody>
+          </CardContent>
         </Card>
       </div>
     </div>
