@@ -34,6 +34,46 @@ const ComparisonPage: React.FC = () => {
 
   const { aiRecommendation, proposals } = comparison;
 
+  // Check if there are proposals to compare
+  if (!proposals || proposals.length === 0) {
+    return (
+      <div className="space-y-6">
+        {/* Header */}
+        <div className="flex items-center justify-between">
+          <div className="flex items-center space-x-4">
+            <Link to={`/rfps/${id}`}>
+              <Button variant="outline" size="sm">
+                <ArrowLeft className="h-4 w-4 mr-2" />
+                Back to RFP
+              </Button>
+            </Link>
+            <div>
+              <h1 className="text-3xl font-bold text-gray-900">{comparison.rfpTitle}</h1>
+              <p className="text-gray-600 mt-1">Proposal Comparison & AI Recommendation</p>
+            </div>
+          </div>
+        </div>
+
+        {/* No Proposals Message */}
+        <Card>
+          <CardBody className="text-center py-12">
+            <Trophy className="h-16 w-16 text-gray-300 mx-auto mb-4" />
+            <h3 className="text-lg font-medium text-gray-900 mb-2">No Proposals to Compare</h3>
+            <p className="text-gray-600 mb-6">
+              There are no proposals submitted for this RFP yet. Once vendors submit proposals,
+              you can compare them here and get AI-powered recommendations.
+            </p>
+            <Link to={`/rfps/${id}`}>
+              <Button variant="primary">
+                Back to RFP Details
+              </Button>
+            </Link>
+          </CardBody>
+        </Card>
+      </div>
+    );
+  }
+
   // Sort proposals by AI score (highest first)
   const sortedProposals = [...proposals].sort((a, b) => b.aiScore - a.aiScore);
 
@@ -56,38 +96,65 @@ const ComparisonPage: React.FC = () => {
       </div>
 
       {/* AI Recommendation */}
-      <Card className="border-green-200 bg-green-50">
-        <CardHeader>
-          <h2 className="text-lg font-semibold text-gray-900 flex items-center">
-            <Trophy className="h-5 w-5 mr-2 text-green-600" />
-            AI Recommendation
-          </h2>
-        </CardHeader>
-        <CardBody>
-          <div className="space-y-4">
-            <div className="flex items-start space-x-4">
-              <div className="flex-shrink-0">
-                <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
-                  <Trophy className="h-6 w-6 text-green-600" />
+      {aiRecommendation ? (
+        <Card className="border-green-200 bg-green-50">
+          <CardHeader>
+            <h2 className="text-lg font-semibold text-gray-900 flex items-center">
+              <Trophy className="h-5 w-5 mr-2 text-green-600" />
+              AI Recommendation
+            </h2>
+          </CardHeader>
+          <CardBody>
+            <div className="space-y-4">
+              <div className="flex items-start space-x-4">
+                <div className="flex-shrink-0">
+                  <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
+                    <Trophy className="h-6 w-6 text-green-600" />
+                  </div>
                 </div>
-              </div>
-              <div className="flex-1">
-                <h3 className="text-xl font-semibold text-gray-900 mb-2">
-                  Recommended: {aiRecommendation.recommendedVendorId ?
-                    proposals.find(p => p.id === aiRecommendation.recommendedVendorId)?.vendorName :
-                    'No recommendation available'
-                  }
-                </h3>
-                <p className="text-gray-700 mb-3">{aiRecommendation.reasoning}</p>
-                <div className="bg-white p-4 rounded-lg border border-green-200">
-                  <h4 className="font-medium text-gray-900 mb-2">Comparison Summary</h4>
-                  <p className="text-sm text-gray-700">{aiRecommendation.comparisonSummary}</p>
+                <div className="flex-1">
+                  <h3 className="text-xl font-semibold text-gray-900 mb-2">
+                    Recommended: {aiRecommendation.recommendedVendorId ?
+                      (proposals.find(p => p.id === aiRecommendation.recommendedVendorId)?.vendorName || 'Unknown Vendor') :
+                      'No recommendation available'
+                    }
+                  </h3>
+                  <p className="text-gray-700 mb-3">{aiRecommendation.reasoning}</p>
+                  <div className="bg-white p-4 rounded-lg border border-green-200">
+                    <h4 className="font-medium text-gray-900 mb-2">Comparison Summary</h4>
+                    <p className="text-sm text-gray-700">{aiRecommendation.comparisonSummary}</p>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-        </CardBody>
-      </Card>
+          </CardBody>
+        </Card>
+      ) : (
+        <Card className="border-yellow-200 bg-yellow-50">
+          <CardHeader>
+            <h2 className="text-lg font-semibold text-gray-900 flex items-center">
+              <Trophy className="h-5 w-5 mr-2 text-yellow-600" />
+              AI Recommendation Unavailable
+            </h2>
+          </CardHeader>
+          <CardBody>
+            <div className="space-y-4">
+              <div className="flex items-start space-x-4">
+                <div className="flex-shrink-0">
+                  <div className="w-12 h-12 bg-yellow-100 rounded-full flex items-center justify-center">
+                    <Trophy className="h-6 w-6 text-yellow-600" />
+                  </div>
+                </div>
+                <div className="flex-1">
+                  <p className="text-gray-700">
+                    AI recommendation is currently unavailable. You can still compare proposals manually using the table below.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </CardBody>
+        </Card>
+      )}
 
       {/* Comparison Table */}
       <Card>
@@ -128,7 +195,7 @@ const ComparisonPage: React.FC = () => {
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="flex items-center">
                         <div className="flex-shrink-0">
-                          {index === 0 && (
+                          {aiRecommendation?.recommendedVendorId === proposal.id && (
                             <Trophy className="h-5 w-5 text-green-600 mr-2" />
                           )}
                         </div>
@@ -213,7 +280,7 @@ const ComparisonPage: React.FC = () => {
                     </span>
                   </div>
                 </div>
-                {index === 0 && (
+                {aiRecommendation?.recommendedVendorId === proposal.id && (
                   <Badge variant="success" className="flex-shrink-0">
                     <Trophy className="h-3 w-3 mr-1" />
                     Recommended
