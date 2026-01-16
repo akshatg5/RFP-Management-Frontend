@@ -258,7 +258,7 @@ const ComparisonPage: React.FC = () => {
         </CardHeader>
         <CardBody>
           <div className="space-y-4">
-            {sortedProposals.map((proposal, index) => (
+            {sortedProposals.map((proposal) => (
               <div key={proposal.id} className="flex items-center space-x-4">
                 <div className="w-32 flex-shrink-0">
                   <div className="text-sm font-medium text-gray-900 truncate">
