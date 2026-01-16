@@ -157,11 +157,11 @@ const RFPsPage: React.FC = () => {
                     <div className="flex flex-wrap gap-4 text-sm text-gray-600 mb-4">
                       <div className="flex items-center space-x-1">
                         <DollarSign className="h-4 w-4" />
-                        <span>{rfp.budget ? formatCurrency(rfp.budget) : 'N/A'}</span>
+                        <span>{rfp.structuredData?.budget ? formatCurrency(rfp.structuredData.budget) : 'N/A'}</span>
                       </div>
                       <div className="flex items-center space-x-1">
                         <Calendar className="h-4 w-4" />
-                        <span>{rfp.deliveryDays ? `${rfp.deliveryDays} days` : 'N/A'}</span>
+                        <span>{rfp.structuredData?.deliveryDays ? `${rfp.structuredData.deliveryDays} days` : 'N/A'}</span>
                       </div>
                       <div className="flex items-center space-x-1">
                         <Users className="h-4 w-4" />

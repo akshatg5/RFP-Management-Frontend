@@ -32,7 +32,8 @@ const ComparisonPage: React.FC = () => {
     );
   }
 
-  const { aiRecommendation, proposals } = comparison;
+  const { proposals } = comparison;
+  const aiRecommendation = comparison.aiRecommendation;
 
   // Check if there are proposals to compare
   if (!proposals || proposals.length === 0) {
@@ -75,7 +76,7 @@ const ComparisonPage: React.FC = () => {
   }
 
   // Sort proposals by AI score (highest first)
-  const sortedProposals = [...proposals].sort((a, b) => b.aiScore - a.aiScore);
+  const sortedProposals = [...proposals].sort((a, b) => (b.aiScore || 0) - (a.aiScore || 0));
 
   return (
     <div className="space-y-6">
@@ -114,15 +115,15 @@ const ComparisonPage: React.FC = () => {
                 </div>
                 <div className="flex-1">
                   <h3 className="text-xl font-semibold text-gray-900 mb-2">
-                    Recommended: {aiRecommendation.recommendedVendorId ?
-                      (proposals.find(p => p.id === aiRecommendation.recommendedVendorId)?.vendorName || 'Unknown Vendor') :
+                    Recommended: {aiRecommendation?.recommendedVendorId ?
+                      (proposals.find(p => p.id === aiRecommendation?.recommendedVendorId)?.vendorName || 'Unknown Vendor') :
                       'No recommendation available'
                     }
                   </h3>
-                  <p className="text-gray-700 mb-3">{aiRecommendation.reasoning}</p>
+                  <p className="text-gray-700 mb-3">{aiRecommendation?.reasoning || 'No reasoning provided'}</p>
                   <div className="bg-white p-4 rounded-lg border border-green-200">
                     <h4 className="font-medium text-gray-900 mb-2">Comparison Summary</h4>
-                    <p className="text-sm text-gray-700">{aiRecommendation.comparisonSummary}</p>
+                    <p className="text-sm text-gray-700">{aiRecommendation?.comparisonSummary || 'No summary available'}</p>
                   </div>
                 </div>
               </div>
@@ -195,7 +196,7 @@ const ComparisonPage: React.FC = () => {
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="flex items-center">
                         <div className="flex-shrink-0">
-                          {aiRecommendation?.recommendedVendorId === proposal.id && (
+                          {aiRecommendation && aiRecommendation.recommendedVendorId === proposal.id && (
                             <Trophy className="h-5 w-5 text-green-600 mr-2" />
                           )}
                         </div>
@@ -211,17 +212,17 @@ const ComparisonPage: React.FC = () => {
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="flex items-center">
-                        <div className={`text-lg font-semibold ${getScoreColor(proposal.aiScore)}`}>
-                          {formatScore(proposal.aiScore)}
+                        <div className={`text-lg font-semibold ${getScoreColor(proposal.aiScore || 0)}`}>
+                          {formatScore(proposal.aiScore || 0)}
                         </div>
                         <div className="ml-2 w-16 bg-gray-200 rounded-full h-2">
-                          <div
-                            className={`h-2 rounded-full ${
-                              proposal.aiScore >= 80 ? 'bg-green-600' :
-                              proposal.aiScore >= 60 ? 'bg-yellow-600' : 'bg-red-600'
-                            }`}
-                            style={{ width: `${proposal.aiScore}%` }}
-                          />
+                      <div
+                        className={`h-2 rounded-full ${
+                          (proposal.aiScore || 0) >= 80 ? 'bg-green-600' :
+                          (proposal.aiScore || 0) >= 60 ? 'bg-yellow-600' : 'bg-red-600'
+                        }`}
+                        style={{ width: `${proposal.aiScore || 0}%` }}
+                      />
                         </div>
                       </div>
                     </td>
@@ -264,23 +265,23 @@ const ComparisonPage: React.FC = () => {
                     {proposal.vendorName}
                   </div>
                 </div>
-                <div className="flex-1">
-                  <div className="flex items-center space-x-2">
-                    <div className="flex-1 bg-gray-200 rounded-full h-4">
-                      <div
-                        className={`h-4 rounded-full ${
-                          proposal.aiScore >= 80 ? 'bg-green-600' :
-                          proposal.aiScore >= 60 ? 'bg-yellow-600' : 'bg-red-600'
-                        }`}
-                        style={{ width: `${proposal.aiScore}%` }}
-                      />
-                    </div>
-                    <span className={`text-sm font-medium min-w-[60px] ${getScoreColor(proposal.aiScore)}`}>
-                      {formatScore(proposal.aiScore)}
-                    </span>
-                  </div>
-                </div>
-                {aiRecommendation?.recommendedVendorId === proposal.id && (
+                      <div className="flex-1">
+                        <div className="flex items-center space-x-2">
+                          <div className="flex-1 bg-gray-200 rounded-full h-4">
+                            <div
+                              className={`h-4 rounded-full ${
+                                (proposal.aiScore || 0) >= 80 ? 'bg-green-600' :
+                                (proposal.aiScore || 0) >= 60 ? 'bg-yellow-600' : 'bg-red-600'
+                              }`}
+                              style={{ width: `${proposal.aiScore || 0}%` }}
+                            />
+                          </div>
+                          <span className={`text-sm font-medium min-w-[60px] ${getScoreColor(proposal.aiScore || 0)}`}>
+                            {formatScore(proposal.aiScore || 0)}
+                          </span>
+                        </div>
+                      </div>
+                {aiRecommendation && aiRecommendation.recommendedVendorId === proposal.id && (
                   <Badge variant="success" className="flex-shrink-0">
                     <Trophy className="h-3 w-3 mr-1" />
                     Recommended

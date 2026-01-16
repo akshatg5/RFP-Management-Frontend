@@ -137,7 +137,7 @@ const Dashboard: React.FC = () => {
                   <div className="flex-1">
                     <h3 className="text-sm font-medium text-gray-900">{rfp.title}</h3>
                     <p className="text-sm text-gray-600">
-                      Budget: {rfp.budget ? formatCurrency(rfp.budget) : 'N/A'} •
+                      Budget: {rfp.structuredData?.budget ? formatCurrency(rfp.structuredData.budget) : 'N/A'} •
                       Created: {formatDate(rfp.createdAt)}
                     </p>
                   </div>

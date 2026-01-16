@@ -22,12 +22,14 @@ export const formatNumber = (num: number) => {
 };
 
 export const formatScore = (score: number) => {
-  return `${score.toFixed(1)}/100`;
+  const safeScore = typeof score === 'number' && !isNaN(score) ? score : 0;
+  return `${safeScore.toFixed(1)}/100`;
 };
 
 export const getScoreColor = (score: number) => {
-  if (score >= 80) return 'text-green-600';
-  if (score >= 60) return 'text-yellow-600';
+  const safeScore = typeof score === 'number' && !isNaN(score) ? score : 0;
+  if (safeScore >= 80) return 'text-green-600';
+  if (safeScore >= 60) return 'text-yellow-600';
   return 'text-red-600';
 };
 

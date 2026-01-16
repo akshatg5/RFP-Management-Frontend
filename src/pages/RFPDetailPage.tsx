@@ -96,7 +96,7 @@ const RFPDetailPage: React.FC = () => {
                 <DollarSign className="h-6 w-6 text-blue-600" />
               </div>
               <div className="text-2xl font-bold text-gray-900">
-                {rfp.budget ? formatCurrency(rfp.budget) : 'N/A'}
+                {rfp.structuredData?.budget ? formatCurrency(rfp.structuredData.budget) : 'N/A'}
               </div>
               <p className="text-sm text-gray-600">Budget</p>
             </div>
@@ -105,7 +105,7 @@ const RFPDetailPage: React.FC = () => {
                 <Calendar className="h-6 w-6 text-green-600" />
               </div>
               <div className="text-2xl font-bold text-gray-900">
-                {rfp.deliveryDays || 'N/A'}
+                {rfp.structuredData?.deliveryDays || 'N/A'}
               </div>
               <p className="text-sm text-gray-600">Delivery Days</p>
             </div>
@@ -139,12 +139,12 @@ const RFPDetailPage: React.FC = () => {
                 </div>
                 <div>
                   <p className="text-sm font-medium text-gray-500">Payment Terms</p>
-                  <p className="text-gray-700">{rfp.paymentTerms || 'Not specified'}</p>
+                  <p className="text-gray-700">{rfp.structuredData?.paymentTerms || 'Not specified'}</p>
                 </div>
                 <div>
                   <p className="text-sm font-medium text-gray-500">Warranty</p>
                   <p className="text-gray-700">
-                    {rfp.warrantyYears ? `${rfp.warrantyYears} years` : 'Not specified'}
+                    {rfp.structuredData?.warrantyYears ? `${rfp.structuredData.warrantyYears} years` : 'Not specified'}
                   </p>
                 </div>
               </div>
