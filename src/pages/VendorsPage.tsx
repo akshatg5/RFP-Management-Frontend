@@ -12,18 +12,20 @@ import Card, { CardHeader, CardBody } from '../components/common/Card';
 import Button from '../components/common/Button';
 import Loading from '../components/common/Loading';
 import ErrorMessage from '../components/common/ErrorMessage';
-import { useVendors, useDeleteVendor, useCreateVendor } from '../hooks/useVendors';
+import { useVendors, useDeleteVendor, useCreateVendor, useUpdateVendor } from '../hooks/useVendors';
 import { formatDate } from '../utils/formatters';
 import { validateVendorData } from '../utils/validators';
-import { CreateVendorRequest } from '../types/vendor.types';
+import { CreateVendorRequest, Vendor } from '../types/vendor.types';
 
 const VendorsPage: React.FC = () => {
   const { data: vendorsData, isLoading, error, refetch } = useVendors();
   const createVendor = useCreateVendor();
+  const updateVendor = useUpdateVendor();
   const deleteVendor = useDeleteVendor();
 
   const [searchTerm, setSearchTerm] = useState('');
   const [showForm, setShowForm] = useState(false);
+  const [editingVendor, setEditingVendor] = useState<Vendor | null>(null);
   const [formData, setFormData] = useState<CreateVendorRequest>({
     name: '',
     email: '',
@@ -51,12 +53,41 @@ const VendorsPage: React.FC = () => {
     setValidationErrors([]);
 
     try {
-      await createVendor.mutateAsync(formData);
+      if (editingVendor) {
+        // Update existing vendor
+        await updateVendor.mutateAsync({
+          id: editingVendor.id,
+          data: formData
+        });
+      } else {
+        // Create new vendor
+        await createVendor.mutateAsync(formData);
+      }
+
       setFormData({ name: '', email: '', notes: '' });
       setShowForm(false);
+      setEditingVendor(null);
     } catch (error) {
       // Error is handled by the hook
     }
+  };
+
+  const handleEdit = (vendor: Vendor) => {
+    setEditingVendor(vendor);
+    setFormData({
+      name: vendor.name,
+      email: vendor.email,
+      notes: vendor.notes || ''
+    });
+    setShowForm(true);
+    setValidationErrors([]);
+  };
+
+  const handleCancel = () => {
+    setShowForm(false);
+    setEditingVendor(null);
+    setFormData({ name: '', email: '', notes: '' });
+    setValidationErrors([]);
   };
 
   const handleDelete = async (id: string) => {
@@ -97,7 +128,10 @@ const VendorsPage: React.FC = () => {
         </div>
         <Button
           variant="primary"
-          onClick={() => setShowForm(!showForm)}
+          onClick={() => {
+            setEditingVendor(null);
+            setShowForm(!showForm);
+          }}
         >
           <Plus className="h-4 w-4 mr-2" />
           Add Vendor
@@ -108,7 +142,9 @@ const VendorsPage: React.FC = () => {
       {showForm && (
         <Card>
           <CardHeader>
-            <h2 className="text-lg font-semibold text-gray-900">Add New Vendor</h2>
+            <h2 className="text-lg font-semibold text-gray-900">
+              {editingVendor ? 'Edit Vendor' : 'Add New Vendor'}
+            </h2>
           </CardHeader>
           <CardBody>
             <form onSubmit={handleSubmit} className="space-y-4">
@@ -166,18 +202,14 @@ const VendorsPage: React.FC = () => {
               <div className="flex space-x-3">
                 <Button
                   type="submit"
-                  loading={createVendor.isPending}
+                  loading={editingVendor ? updateVendor.isPending : createVendor.isPending}
                 >
-                  Add Vendor
+                  {editingVendor ? 'Update Vendor' : 'Add Vendor'}
                 </Button>
                 <Button
                   type="button"
                   variant="outline"
-                  onClick={() => {
-                    setShowForm(false);
-                    setFormData({ name: '', email: '', notes: '' });
-                    setValidationErrors([]);
-                  }}
+                  onClick={handleCancel}
                 >
                   Cancel
                 </Button>
@@ -256,7 +288,11 @@ const VendorsPage: React.FC = () => {
                     </div>
                   </div>
                   <div className="flex space-x-2">
-                    <Button variant="outline" size="sm">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => handleEdit(vendor)}
+                    >
                       <Edit className="h-4 w-4 mr-1" />
                       Edit
                     </Button>
