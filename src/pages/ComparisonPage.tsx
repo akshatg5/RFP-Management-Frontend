@@ -1,6 +1,6 @@
 import React from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { ArrowLeft, Trophy, TrendingUp, DollarSign, Calendar, Shield } from 'lucide-react';
+import { ArrowLeft, Trophy } from 'lucide-react';
 import Card, { CardHeader, CardBody } from '../components/common/Card';
 import Button from '../components/common/Button';
 import Loading from '../components/common/Loading';

@@ -12,7 +12,6 @@ import Card, { CardHeader, CardBody } from '../components/common/Card';
 import Button from '../components/common/Button';
 import Loading from '../components/common/Loading';
 import ErrorMessage from '../components/common/ErrorMessage';
-import Badge from '../components/common/Badge';
 import { useVendors, useDeleteVendor, useCreateVendor } from '../hooks/useVendors';
 import { formatDate } from '../utils/formatters';
 import { validateVendorData } from '../utils/validators';

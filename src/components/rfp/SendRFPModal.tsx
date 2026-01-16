@@ -5,7 +5,6 @@ import { useVendors } from '../../hooks/useVendors';
 import { Vendor } from '../../types/vendor.types';
 import Button from '../common/Button';
 import Loading from '../common/Loading';
-import ErrorMessage from '../common/ErrorMessage';
 
 interface SendRFPModalProps {
   isOpen: boolean;

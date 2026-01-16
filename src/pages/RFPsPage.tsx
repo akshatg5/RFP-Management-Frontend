@@ -12,7 +12,7 @@ import {
   DollarSign,
   Users
 } from 'lucide-react';
-import Card, { CardHeader, CardBody } from '../components/common/Card';
+import Card, { CardBody } from '../components/common/Card';
 import Button from '../components/common/Button';
 import Loading from '../components/common/Loading';
 import ErrorMessage from '../components/common/ErrorMessage';

@@ -3,7 +3,6 @@ import { X, Mail, FileText } from 'lucide-react';
 import { useProcessProposal } from '../../hooks/useProposals';
 import { isValidEmail } from '../../utils/validators';
 import Button from '../common/Button';
-import ErrorMessage from '../common/ErrorMessage';
 
 interface ManualProposalFormProps {
   isOpen: boolean;

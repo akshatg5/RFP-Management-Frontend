@@ -8,7 +8,7 @@ import ErrorMessage from '../components/common/ErrorMessage';
 import Badge from '../components/common/Badge';
 import SendRFPModal from '../components/rfp/SendRFPModal';
 import ManualProposalForm from '../components/proposal/ManualProposalForm';
-import { useRFPWithVendors, useProposals } from '../hooks/useRFPs';
+import { useRFPWithVendors } from '../hooks/useRFPs';
 import { useProposals as useProposalData } from '../hooks/useProposals';
 import { formatDate, formatCurrency } from '../utils/formatters';
 
