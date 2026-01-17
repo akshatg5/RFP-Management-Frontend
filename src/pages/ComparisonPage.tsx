@@ -1,6 +1,6 @@
 import type React from "react"
 import { useParams, Link } from "react-router-dom"
-import { ArrowLeft, Trophy } from "lucide-react"
+import { ArrowLeft, Trophy, RefreshCw } from "lucide-react"
 import Loading from "../components/common/Loading"
 import ErrorMessage from "../components/common/ErrorMessage"
 import { useProposalComparison } from "../hooks/useProposals"
@@ -8,10 +8,15 @@ import { formatCurrency, getScoreColor, formatScore } from "../utils/formatters"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
+import { useQueryClient } from "@tanstack/react-query"
+import toast from "react-hot-toast"
+import { useState } from "react"
 
 const ComparisonPage: React.FC = () => {
   const { id } = useParams<{ id: string }>()
   const { data: comparisonData, isLoading, error } = useProposalComparison(id!)
+  const queryClient = useQueryClient()
+  const [regenerating, setRegenerating] = useState(false)
 
   const comparison = comparisonData?.data
 
@@ -64,10 +69,25 @@ const ComparisonPage: React.FC = () => {
 
   const sortedProposals = [...proposals].sort((a, b) => (b.aiScore || 0) - (a.aiScore || 0))
 
+  const handleRegenerateComparison = async () => {
+    if (!id) return
+
+    setRegenerating(true)
+    try {
+      // Invalidate and refetch the comparison data
+      await queryClient.invalidateQueries({ queryKey: ['proposals', id, 'comparison'] })
+      toast.success('Comparison regenerated successfully!')
+    } catch (error) {
+      toast.error('Failed to regenerate comparison')
+    } finally {
+      setRegenerating(false)
+    }
+  }
+
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex items-start justify-between">
         <div className="flex items-center space-x-4">
           <Link to={`/rfps/${id}`}>
             <Button variant="outline" size="sm">
@@ -79,6 +99,17 @@ const ComparisonPage: React.FC = () => {
             <h1 className="text-3xl font-bold text-foreground">{comparison.rfpTitle}</h1>
             <p className="text-muted-foreground mt-1">Proposal Comparison & AI Analysis</p>
           </div>
+        </div>
+        <div className="flex items-center space-x-3">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={handleRegenerateComparison}
+            disabled={regenerating}
+          >
+            <RefreshCw className={`h-4 w-4 mr-2 ${regenerating ? 'animate-spin' : ''}`} />
+            {regenerating ? 'Regenerating...' : 'Regenerate Analysis'}
+          </Button>
         </div>
       </div>
 
@@ -143,7 +174,7 @@ const ComparisonPage: React.FC = () => {
                 </tr>
               </thead>
               <tbody>
-                {sortedProposals.map((proposal, index) => (
+                {sortedProposals.map((proposal) => (
                   <tr
                     key={proposal.id}
                     className={`border-b border-border hover:bg-muted/30 transition-colors ${
