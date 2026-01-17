@@ -15,6 +15,20 @@ export interface StructuredRFP {
   additionalRequirements?: string[];
 }
 
+export interface Proposal {
+  id: string;
+  rfpId: string;
+  vendorId: string;
+  vendorName: string;
+  rawEmailBody: string;
+  extractedData: any;
+  aiScore: number | null;
+  aiEvaluation: string | null;
+  usedFallbackParsing: boolean; // Flag if fallback parser was used
+  inboundEmailId?: string; // ID of the inbound email for re-parsing
+  createdAt: string;
+}
+
 export interface RFP {
   id: string;
   title: string;

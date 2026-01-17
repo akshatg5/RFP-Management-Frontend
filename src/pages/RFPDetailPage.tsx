@@ -220,15 +220,50 @@ const RFPDetailPage: React.FC = () => {
           {proposals.length > 0 ? (
             <div className="space-y-3">
               {proposals.map((proposal) => (
-                <div key={proposal.id} className="p-4 bg-muted/30 rounded-lg border border-border/50">
+                <div 
+                  key={proposal.id} 
+                  className={`p-4 rounded-lg border ${
+                    proposal.usedFallbackParsing 
+                      ? 'bg-yellow-50 border-yellow-200' 
+                      : 'bg-muted/30 border-border/50'
+                  }`}
+                >
                   <div className="flex items-start justify-between mb-2">
-                    <h3 className="text-sm font-medium text-foreground">{proposal.vendorName}</h3>
-                    <Badge className="bg-blue-100 text-blue-700">Score: {proposal.aiScore}/100</Badge>
+                    <div className="flex items-center gap-2">
+                      <h3 className="text-sm font-medium text-foreground">{proposal.vendorName}</h3>
+                      {proposal.usedFallbackParsing && (
+                        <Badge variant="outline" className="bg-yellow-100 text-yellow-800 border-yellow-300">
+                          <AlertCircle className="h-3 w-3 mr-1" />
+                          Needs AI Re-parse
+                        </Badge>
+                      )}
+                    </div>
+                    <div className="flex items-center gap-2">
+                      {proposal.aiScore && (
+                        <Badge className="bg-blue-100 text-blue-700">Score: {proposal.aiScore}/100</Badge>
+                      )}
+                      {proposal.usedFallbackParsing && (
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => reparseEmail.mutate(proposal.inboundEmailId)}
+                          disabled={reparseEmail.isPending}
+                        >
+                          <RotateCw className={`h-3 w-3 mr-1 ${reparseEmail.isPending ? 'animate-spin' : ''}`} />
+                          Re-parse
+                        </Button>
+                      )}
+                    </div>
                   </div>
                   <p className="text-xs text-muted-foreground">
                     {formatCurrency(proposal.extractedData.totalPrice)} • {proposal.extractedData.deliveryDays}d
                     delivery
                   </p>
+                  {proposal.usedFallbackParsing && (
+                    <p className="text-xs text-yellow-700 mt-2">
+                      ⚠️ Basic parsing used (AI quota exceeded). Click "Re-parse" for full AI analysis.
+                    </p>
+                  )}
                 </div>
               ))}
             </div>
