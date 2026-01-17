@@ -246,7 +246,7 @@ const RFPDetailPage: React.FC = () => {
                         <Button
                           variant="outline"
                           size="sm"
-                          onClick={() => reparseEmail.mutate(proposal.inboundEmailId)}
+                          onClick={() => reparseEmail.mutate(proposal.inboundEmailId ?? "")}
                           disabled={reparseEmail.isPending}
                         >
                           <RotateCw className={`h-3 w-3 mr-1 ${reparseEmail.isPending ? 'animate-spin' : ''}`} />

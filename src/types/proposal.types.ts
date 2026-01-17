@@ -21,8 +21,10 @@ export interface Proposal {
   vendorEmail: string;
   rawEmailBody: string;
   extractedData: ExtractedProposalData;
-  aiScore: number;
-  aiEvaluation: string;
+  aiScore: number | null;
+  aiEvaluation: string | null;
+  usedFallbackParsing: boolean;
+  inboundEmailId?: string;
   createdAt: string;
 }
 
