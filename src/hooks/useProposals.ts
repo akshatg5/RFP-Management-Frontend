@@ -3,11 +3,18 @@ import { proposalService } from '../services/proposalService';
 import { ProcessProposalRequest } from '../types/proposal.types';
 import toast from 'react-hot-toast';
 
-export const useProposals = (rfpId: string) => {
+export const useProposals = (rfpId?: string) => {
   return useQuery({
-    queryKey: ['proposals', rfpId],
-    queryFn: () => proposalService.getProposalsByRFP(rfpId),
-    enabled: !!rfpId,
+    queryKey: rfpId ? ['proposals', rfpId] : ['proposals', 'all'],
+    queryFn: () => rfpId ? proposalService.getProposalsByRFP(rfpId) : proposalService.getAllProposals(),
+    enabled: rfpId ? !!rfpId : true,
+  });
+};
+
+export const useAllProposals = () => {
+  return useQuery({
+    queryKey: ['proposals', 'all'],
+    queryFn: () => proposalService.getAllProposals(),
   });
 };
 

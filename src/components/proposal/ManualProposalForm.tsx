@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { X, Mail, FileText } from 'lucide-react';
 import { useProcessProposal } from '../../hooks/useProposals';
 import { isValidEmail } from '../../utils/validators';
-import Button from '../common/Button';
+import { Button } from '../ui/button';
 
 interface ManualProposalFormProps {
   isOpen: boolean;
@@ -154,7 +154,6 @@ const ManualProposalForm: React.FC<ManualProposalFormProps> = ({
           <div className="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
             <Button
               onClick={handleSubmit}
-              loading={processProposal.isPending}
               className="w-full sm:w-auto sm:ml-3"
             >
               <Mail className="h-4 w-4 mr-2" />

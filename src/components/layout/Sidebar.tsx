@@ -4,7 +4,8 @@ import {
   Home,
   FileText,
   Users,
-  Plus
+  Plus,
+  MessageSquare
 } from 'lucide-react';
 
 interface SidebarProps {
@@ -18,6 +19,7 @@ const Sidebar: React.FC<SidebarProps> = ({ className = '' }) => {
     { name: 'Dashboard', href: '/', icon: Home },
     { name: 'RFPs', href: '/rfps', icon: FileText },
     { name: 'Vendors', href: '/vendors', icon: Users },
+    { name: 'Responses', href: '/vendor-responses', icon: MessageSquare },
   ];
 
   const quickActions = [

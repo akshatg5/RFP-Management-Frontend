@@ -1,108 +1,100 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
-import {
-  FileText,
-  Users,
-  MessageSquare,
-  Plus,
-  Eye,
-  BarChart3
-} from 'lucide-react';
-import Loading from '../components/common/Loading';
-import ErrorMessage from '../components/common/ErrorMessage';
-import { formatDate, formatCurrency } from '../utils/formatters';
-import { useRFPs } from '../hooks/useRFPs';
-import { useVendors } from '../hooks/useVendors';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader } from '@/components/ui/card';
+import type React from "react"
+import { Link } from "react-router-dom"
+import { FileText, Users, TrendingUp, Plus, Eye, BarChart3, ArrowRight } from "lucide-react"
+import Loading from "../components/common/Loading"
+import ErrorMessage from "../components/common/ErrorMessage"
+import { formatDate, formatCurrency } from "../utils/formatters"
+import { useRFPs } from "../hooks/useRFPs"
+import { useVendors } from "../hooks/useVendors"
+import { Button } from "@/components/ui/button"
+import { Card, CardContent, CardHeader } from "@/components/ui/card"
 
 const Dashboard: React.FC = () => {
-  const { data: rfpsData, isLoading: rfpsLoading, error: rfpsError } = useRFPs();
-  const { data: vendorsData, isLoading: vendorsLoading } = useVendors();
+  const { data: rfpsData, isLoading: rfpsLoading, error: rfpsError } = useRFPs()
+  const { data: vendorsData, isLoading: vendorsLoading } = useVendors()
 
-  const rfps = rfpsData?.data || [];
-  const vendors = vendorsData?.data || [];
+  const rfps = rfpsData?.data || []
+  const vendors = vendorsData?.data || []
 
-  // Calculate statistics
-  const totalRFPs = rfps.length;
-  const sentRFPs = rfps.filter(rfp => rfp.structuredData).length; // Simplified calculation
-  const totalVendors = vendors.length;
+  const totalRFPs = rfps.length
+  const sentRFPs = rfps.filter((rfp) => rfp.structuredData).length
+  const totalVendors = vendors.length
+  const recentRFPs = rfps.slice(0, 5)
 
-  // Get recent RFPs (last 5)
-  const recentRFPs = rfps.slice(0, 5);
-
-  const isLoading = rfpsLoading || vendorsLoading;
+  const isLoading = rfpsLoading || vendorsLoading
 
   if (isLoading) {
     return (
       <div className="flex justify-center items-center min-h-96">
         <Loading size="lg" text="Loading dashboard..." />
       </div>
-    );
+    )
   }
 
   if (rfpsError) {
-    return (
-      <ErrorMessage
-        title="Failed to load dashboard"
-        message={rfpsError.message}
-      />
-    );
+    return <ErrorMessage title="Failed to load dashboard" message={rfpsError.message} />
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
       {/* Header */}
-      <div className="flex justify-between items-center">
+      <div className="flex justify-between items-start">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Dashboard</h1>
-          <p className="text-gray-600 mt-1">Overview of your RFP management system</p>
+          <h1 className="text-3xl font-bold text-foreground">Dashboard</h1>
+          <p className="text-muted-foreground mt-2">Welcome back! Here's your RFP overview</p>
         </div>
-        <div className="flex space-x-3">
-          <Link to="/rfps/create">
-            <Button variant="default" size="sm">
-              <Plus className="h-4 w-4 mr-2" />
-              Create RFP
-            </Button>
-          </Link>
-          <Link to="/vendors">
-            <Button variant="outline" size="sm">
-              <Users className="h-4 w-4 mr-2" />
-              Add Vendor
-            </Button>
-          </Link>
-        </div>
+        <Link to="/rfps/create">
+          <Button size="lg">
+            <Plus className="h-4 w-4 mr-2" />
+            Create New RFP
+          </Button>
+        </Link>
       </div>
 
       {/* Statistics Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        <Card>
-          <CardContent className="text-center">
-            <div className="flex items-center justify-center w-12 h-12 bg-blue-100 rounded-lg mx-auto mb-3">
-              <FileText className="h-6 w-6 text-blue-600" />
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <Card className="hover:shadow-lg transition-shadow">
+          <CardContent className="pt-6">
+            <div className="flex items-start justify-between">
+              <div>
+                <p className="text-sm text-muted-foreground font-medium">Total RFPs</p>
+                <p className="text-3xl font-bold text-foreground mt-2">{totalRFPs}</p>
+                <p className="text-xs text-muted-foreground mt-2">Active in system</p>
+              </div>
+              <div className="p-3 bg-blue-100 rounded-lg">
+                <FileText className="w-6 h-6 text-blue-600" />
+              </div>
             </div>
-            <div className="text-2xl font-bold text-gray-900">{totalRFPs}</div>
-            <p className="text-sm text-gray-600">Total RFPs</p>
           </CardContent>
         </Card>
 
-        <Card>
-          <CardContent className="text-center">
-            <div className="flex items-center justify-center w-12 h-12 bg-green-100 rounded-lg mx-auto mb-3">
-              <MessageSquare className="h-6 w-6 text-green-600" />
+        <Card className="hover:shadow-lg transition-shadow">
+          <CardContent className="pt-6">
+            <div className="flex items-start justify-between">
+              <div>
+                <p className="text-sm text-muted-foreground font-medium">Sent RFPs</p>
+                <p className="text-3xl font-bold text-foreground mt-2">{sentRFPs}</p>
+                <p className="text-xs text-muted-foreground mt-2">Awaiting responses</p>
+              </div>
+              <div className="p-3 bg-green-100 rounded-lg">
+                <TrendingUp className="w-6 h-6 text-green-600" />
+              </div>
             </div>
-            <div className="text-2xl font-bold text-gray-900">{sentRFPs}</div>
-            <p className="text-sm text-gray-600">RFPs Sent</p>
           </CardContent>
         </Card>
 
-        <Card>
-          <CardContent className="text-center">
-            <div className="flex items-center justify-center w-12 h-12 bg-purple-100 rounded-lg mx-auto mb-3">
-              <Users className="h-6 w-6 text-purple-600" />
+        <Card className="hover:shadow-lg transition-shadow">
+          <CardContent className="pt-6">
+            <div className="flex items-start justify-between">
+              <div>
+                <p className="text-sm text-muted-foreground font-medium">Total Vendors</p>
+                <p className="text-3xl font-bold text-foreground mt-2">{totalVendors}</p>
+                <p className="text-xs text-muted-foreground mt-2">In your network</p>
+              </div>
+              <div className="p-3 bg-purple-100 rounded-lg">
+                <Users className="w-6 h-6 text-purple-600" />
+              </div>
             </div>
-            <div className="text-2xl font-bold text-gray-900">{totalVendors}</div>
-            <p className="text-sm text-gray-600">Total Vendors</p>
           </CardContent>
         </Card>
       </div>
@@ -111,47 +103,55 @@ const Dashboard: React.FC = () => {
       <Card>
         <CardHeader>
           <div className="flex justify-between items-center">
-            <h2 className="text-lg font-semibold text-gray-900">Recent RFPs</h2>
+            <h2 className="text-lg font-semibold text-foreground">Recent RFPs</h2>
             <Link to="/rfps">
-              <Button variant="outline" size="sm">View All</Button>
+              <Button variant="outline" size="sm">
+                View All
+                <ArrowRight className="h-4 w-4 ml-2" />
+              </Button>
             </Link>
           </div>
         </CardHeader>
         <CardContent>
           {recentRFPs.length === 0 ? (
-            <div className="text-center py-8">
-              <FileText className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-              <h3 className="text-lg font-medium text-gray-900 mb-2">No RFPs yet</h3>
-              <p className="text-gray-600 mb-4">Create your first RFP to get started</p>
+            <div className="text-center py-12">
+              <div className="inline-flex items-center justify-center w-16 h-16 bg-muted rounded-full mb-4">
+                <FileText className="h-8 w-8 text-muted-foreground" />
+              </div>
+              <h3 className="text-lg font-medium text-foreground mb-2">No RFPs yet</h3>
+              <p className="text-muted-foreground mb-6">Create your first RFP to get started</p>
               <Link to="/rfps/create">
-                <Button variant="default">
+                <Button>
                   <Plus className="h-4 w-4 mr-2" />
                   Create RFP
                 </Button>
               </Link>
             </div>
           ) : (
-            <div className="space-y-4">
+            <div className="space-y-3">
               {recentRFPs.map((rfp) => (
-                <div key={rfp.id} className="flex items-center justify-between p-4 border border-gray-200 rounded-lg">
-                  <div className="flex-1">
-                    <h3 className="text-sm font-medium text-gray-900">{rfp.title}</h3>
-                    <p className="text-sm text-gray-600">
-                      Budget: {rfp.structuredData?.budget ? formatCurrency(rfp.structuredData.budget) : 'N/A'} •
-                      Created: {formatDate(rfp.createdAt)}
+                <div
+                  key={rfp.id}
+                  className="flex items-center justify-between p-4 bg-muted/30 rounded-lg hover:bg-muted/50 transition-colors"
+                >
+                  <div className="flex-1 min-w-0">
+                    <h3 className="text-sm font-medium text-foreground truncate">{rfp.title}</h3>
+                    <p className="text-xs text-muted-foreground mt-1">
+                      {rfp.structuredData?.budget
+                        ? `Budget: ${formatCurrency(rfp.structuredData.budget)}`
+                        : "No budget set"}{" "}
+                      • Created {formatDate(rfp.createdAt)}
                     </p>
                   </div>
-                  <div className="flex space-x-2">
+                  <div className="flex space-x-2 ml-4">
                     <Link to={`/rfps/${rfp.id}`}>
                       <Button variant="outline" size="sm">
-                        <Eye className="h-4 w-4 mr-1" />
-                        View
+                        <Eye className="h-4 w-4" />
                       </Button>
                     </Link>
                     <Link to={`/rfps/${rfp.id}/compare`}>
                       <Button variant="outline" size="sm">
-                        <BarChart3 className="h-4 w-4 mr-1" />
-                        Compare
+                        <BarChart3 className="h-4 w-4" />
                       </Button>
                     </Link>
                   </div>
@@ -163,45 +163,45 @@ const Dashboard: React.FC = () => {
       </Card>
 
       {/* Quick Actions */}
-      <Card>
-        <CardHeader>
-          <h2 className="text-lg font-semibold text-gray-900">Quick Actions</h2>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <Card className="bg-gradient-to-br from-blue-50 to-blue-50/50 border-blue-200/50 hover:shadow-lg transition-shadow">
+          <CardContent className="pt-6">
             <Link to="/rfps/create">
-              <div className="p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors cursor-pointer">
-                <div className="flex items-center space-x-3">
-                  <div className="flex items-center justify-center w-10 h-10 bg-blue-100 rounded-lg">
-                    <Plus className="h-5 w-5 text-blue-600" />
-                  </div>
-                  <div>
-                    <h3 className="text-sm font-medium text-gray-900">Create New RFP</h3>
-                    <p className="text-xs text-gray-600">Use AI to generate structured RFPs</p>
-                  </div>
+              <div className="flex items-start justify-between cursor-pointer group">
+                <div>
+                  <h3 className="text-lg font-semibold text-foreground group-hover:text-blue-600 transition-colors">
+                    Create New RFP
+                  </h3>
+                  <p className="text-sm text-muted-foreground mt-1">Use AI to generate structured RFPs in seconds</p>
+                </div>
+                <div className="p-3 bg-blue-100 rounded-lg group-hover:bg-blue-200 transition-colors">
+                  <Plus className="w-5 h-5 text-blue-600" />
                 </div>
               </div>
             </Link>
+          </CardContent>
+        </Card>
 
+        <Card className="bg-gradient-to-br from-green-50 to-green-50/50 border-green-200/50 hover:shadow-lg transition-shadow">
+          <CardContent className="pt-6">
             <Link to="/vendors">
-              <div className="p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors cursor-pointer">
-                <div className="flex items-center space-x-3">
-                  <div className="flex items-center justify-center w-10 h-10 bg-green-100 rounded-lg">
-                    <Users className="h-5 w-5 text-green-600" />
-                  </div>
-                  <div>
-                    <h3 className="text-sm font-medium text-gray-900">Manage Vendors</h3>
-                    <p className="text-xs text-gray-600">Add and organize your vendor contacts</p>
-                  </div>
+              <div className="flex items-start justify-between cursor-pointer group">
+                <div>
+                  <h3 className="text-lg font-semibold text-foreground group-hover:text-green-600 transition-colors">
+                    Manage Vendors
+                  </h3>
+                  <p className="text-sm text-muted-foreground mt-1">Add and organize your vendor contacts</p>
+                </div>
+                <div className="p-3 bg-green-100 rounded-lg group-hover:bg-green-200 transition-colors">
+                  <Users className="w-5 h-5 text-green-600" />
                 </div>
               </div>
             </Link>
-
-          </div>
-        </CardContent>
-      </Card>
+          </CardContent>
+        </Card>
+      </div>
     </div>
-  );
-};
+  )
+}
 
-export default Dashboard;
+export default Dashboard

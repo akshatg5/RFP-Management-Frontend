@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { FileText, Users, Home } from 'lucide-react';
+import { FileText, Users, Home, MessageSquare } from 'lucide-react';
 
 const Header: React.FC = () => {
   const location = useLocation();
@@ -9,6 +9,7 @@ const Header: React.FC = () => {
     { name: 'Dashboard', href: '/', icon: Home },
     { name: 'RFPs', href: '/rfps', icon: FileText },
     { name: 'Vendors', href: '/vendors', icon: Users },
+    { name: 'Responses', href: '/vendor-responses', icon: MessageSquare },
   ];
 
   return (

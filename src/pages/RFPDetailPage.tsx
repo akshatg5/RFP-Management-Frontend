@@ -1,51 +1,39 @@
-import React, { useState } from 'react';
-import { useParams, Link } from 'react-router-dom';
-import { ArrowLeft, Send, BarChart3, FileText, DollarSign, Calendar, Users, Mail, Plus } from 'lucide-react';
-import Loading from '../components/common/Loading';
-import ErrorMessage from '../components/common/ErrorMessage';
-import SendRFPModal from '../components/rfp/SendRFPModal';
-import ManualProposalForm from '../components/proposal/ManualProposalForm';
-import { useRFPWithVendors } from '../hooks/useRFPs';
-import { useProposals as useProposalData } from '../hooks/useProposals';
-import { formatDate, formatCurrency } from '../utils/formatters';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
+import type React from "react"
+import { useState } from "react"
+import { useParams, Link } from "react-router-dom"
+import { ArrowLeft, Send, BarChart3, FileText, DollarSign, Calendar, Users, Mail, Plus } from "lucide-react"
+import Loading from "../components/common/Loading"
+import ErrorMessage from "../components/common/ErrorMessage"
+import SendRFPModal from "../components/rfp/SendRFPModal"
+import ManualProposalForm from "../components/proposal/ManualProposalForm"
+import { useRFPWithVendors } from "../hooks/useRFPs"
+import { useProposals as useProposalData } from "../hooks/useProposals"
+import { formatCurrency } from "../utils/formatters"
+import { Button } from "@/components/ui/button"
+import { Card, CardContent, CardHeader } from "@/components/ui/card"
+import { Badge } from "@/components/ui/badge"
 
 const RFPDetailPage: React.FC = () => {
-  const { id } = useParams<{ id: string }>();
-  const { data: rfpData, isLoading, error } = useRFPWithVendors(id!);
-  const { data: proposalsData } = useProposalData(id!);
+  const { id } = useParams<{ id: string }>()
+  const { data: rfpData, isLoading, error } = useRFPWithVendors(id!)
+  const { data: proposalsData } = useProposalData(id!)
 
-  const [showSendModal, setShowSendModal] = useState(false);
-  const [showManualProposalForm, setShowManualProposalForm] = useState(false);
+  const [showSendModal, setShowSendModal] = useState(false)
+  const [showManualProposalForm, setShowManualProposalForm] = useState(false)
 
-  const rfp = rfpData?.data;
-  const proposals = proposalsData?.data || [];
-
-  const handleSendRFP = () => {
-    setShowSendModal(true);
-  };
-
-  const handleManualProposal = () => {
-    setShowManualProposalForm(true);
-  };
+  const rfp = rfpData?.data
+  const proposals = proposalsData?.data || []
 
   if (isLoading) {
     return (
       <div className="flex justify-center items-center min-h-96">
         <Loading size="lg" text="Loading RFP details..." />
       </div>
-    );
+    )
   }
 
   if (error || !rfp) {
-    return (
-      <ErrorMessage
-        title="Failed to load RFP"
-        message={error?.message || 'RFP not found'}
-      />
-    );
+    return <ErrorMessage title="Failed to load RFP" message={error?.message || "RFP not found"} />
   }
 
   return (
@@ -56,154 +44,143 @@ const RFPDetailPage: React.FC = () => {
           <Link to="/rfps">
             <Button variant="outline" size="sm">
               <ArrowLeft className="h-4 w-4 mr-2" />
-              Back to RFPs
+              Back
             </Button>
           </Link>
           <div>
-            <h1 className="text-3xl font-bold text-gray-900">{rfp.title}</h1>
-            <p className="text-gray-600 mt-1">RFP Details and Management</p>
+            <h1 className="text-3xl font-bold text-foreground">{rfp.title}</h1>
+            <p className="text-muted-foreground mt-1">RFP Details & Management</p>
           </div>
         </div>
-        <div className="flex space-x-2">
-          <Button variant="outline" onClick={handleSendRFP}>
+        <div className="flex gap-2">
+          <Button variant="outline" onClick={() => setShowSendModal(true)}>
             <Send className="h-4 w-4 mr-2" />
             Send to Vendors
           </Button>
-          <Button variant="outline" onClick={handleManualProposal}>
+          <Button variant="outline" onClick={() => setShowManualProposalForm(true)}>
             <Plus className="h-4 w-4 mr-2" />
-            Manual Proposal
+            Add Proposal
           </Button>
           {proposals.length > 0 && (
             <Link to={`/rfps/${id}/compare`}>
-              <Button variant="default">
+              <Button>
                 <BarChart3 className="h-4 w-4 mr-2" />
-                Compare Proposals ({proposals.length})
+                Compare ({proposals.length})
               </Button>
             </Link>
           )}
         </div>
       </div>
 
-      {/* RFP Overview */}
-      <Card>
-        <CardHeader>
-          <h2 className="text-lg font-semibold text-gray-900">RFP Overview</h2>
-        </CardHeader>
-        <CardContent>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
-            <div className="text-center">
-              <div className="flex items-center justify-center w-12 h-12 bg-blue-100 rounded-lg mx-auto mb-3">
-                <DollarSign className="h-6 w-6 text-blue-600" />
-              </div>
-              <div className="text-2xl font-bold text-gray-900">
-                {rfp.structuredData?.budget ? formatCurrency(rfp.structuredData.budget) : 'N/A'}
-              </div>
-              <p className="text-sm text-gray-600">Budget</p>
+      {/* Overview Stats */}
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+        <Card className="hover:shadow-lg transition-shadow">
+          <CardContent className="pt-6 text-center">
+            <div className="inline-flex items-center justify-center w-10 h-10 bg-blue-100 rounded-lg mb-2">
+              <DollarSign className="h-5 w-5 text-blue-600" />
             </div>
-            <div className="text-center">
-              <div className="flex items-center justify-center w-12 h-12 bg-green-100 rounded-lg mx-auto mb-3">
-                <Calendar className="h-6 w-6 text-green-600" />
-              </div>
-              <div className="text-2xl font-bold text-gray-900">
-                {rfp.structuredData?.deliveryDays || 'N/A'}
-              </div>
-              <p className="text-sm text-gray-600">Delivery Days</p>
+            <p className="text-lg font-bold text-foreground">
+              {rfp.structuredData?.budget ? formatCurrency(rfp.structuredData.budget) : "N/A"}
+            </p>
+            <p className="text-xs text-muted-foreground">Budget</p>
+          </CardContent>
+        </Card>
+        <Card className="hover:shadow-lg transition-shadow">
+          <CardContent className="pt-6 text-center">
+            <div className="inline-flex items-center justify-center w-10 h-10 bg-green-100 rounded-lg mb-2">
+              <Calendar className="h-5 w-5 text-green-600" />
             </div>
-            <div className="text-center">
-              <div className="flex items-center justify-center w-12 h-12 bg-purple-100 rounded-lg mx-auto mb-3">
-                <Users className="h-6 w-6 text-purple-600" />
-              </div>
-              <div className="text-2xl font-bold text-gray-900">
-                {rfp.vendors?.length || 0}
-              </div>
-              <p className="text-sm text-gray-600">Vendors</p>
+            <p className="text-lg font-bold text-foreground">{rfp.structuredData?.deliveryDays || "N/A"}</p>
+            <p className="text-xs text-muted-foreground">Days</p>
+          </CardContent>
+        </Card>
+        <Card className="hover:shadow-lg transition-shadow">
+          <CardContent className="pt-6 text-center">
+            <div className="inline-flex items-center justify-center w-10 h-10 bg-purple-100 rounded-lg mb-2">
+              <Users className="h-5 w-5 text-purple-600" />
             </div>
-            <div className="text-center">
-              <div className="flex items-center justify-center w-12 h-12 bg-orange-100 rounded-lg mx-auto mb-3">
-                <FileText className="h-6 w-6 text-orange-600" />
-              </div>
-              <div className="text-2xl font-bold text-gray-900">
-                {proposals.length}
-              </div>
-              <p className="text-sm text-gray-600">Proposals</p>
+            <p className="text-lg font-bold text-foreground">{rfp.vendors?.length || 0}</p>
+            <p className="text-xs text-muted-foreground">Vendors</p>
+          </CardContent>
+        </Card>
+        <Card className="hover:shadow-lg transition-shadow">
+          <CardContent className="pt-6 text-center">
+            <div className="inline-flex items-center justify-center w-10 h-10 bg-orange-100 rounded-lg mb-2">
+              <FileText className="h-5 w-5 text-orange-600" />
             </div>
-          </div>
+            <p className="text-lg font-bold text-foreground">{proposals.length}</p>
+            <p className="text-xs text-muted-foreground">Proposals</p>
+          </CardContent>
+        </Card>
+      </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      {/* Details */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Requirements */}
+        <Card>
+          <CardHeader>
+            <h3 className="text-lg font-semibold text-foreground">Requirements</h3>
+          </CardHeader>
+          <CardContent className="space-y-4">
             <div>
-              <h3 className="text-lg font-semibold text-gray-900 mb-3">Requirements</h3>
+              <p className="text-xs font-medium text-muted-foreground">Description</p>
+              <p className="text-sm text-foreground mt-1">{rfp.structuredData.description}</p>
+            </div>
+            <div>
+              <p className="text-xs font-medium text-muted-foreground">Payment Terms</p>
+              <p className="text-sm text-foreground mt-1">{rfp.structuredData?.paymentTerms || "Not specified"}</p>
+            </div>
+            <div>
+              <p className="text-xs font-medium text-muted-foreground">Warranty</p>
+              <p className="text-sm text-foreground mt-1">
+                {rfp.structuredData?.warrantyYears ? `${rfp.structuredData.warrantyYears} years` : "Not specified"}
+              </p>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Items */}
+        <Card>
+          <CardHeader>
+            <h3 className="text-lg font-semibold text-foreground">Items Required</h3>
+          </CardHeader>
+          <CardContent>
+            {rfp.structuredData.items && rfp.structuredData.items.length > 0 ? (
               <div className="space-y-3">
-                <div>
-                  <p className="text-sm font-medium text-gray-500">Description</p>
-                  <p className="text-gray-700">{rfp.structuredData.description}</p>
-                </div>
-                <div>
-                  <p className="text-sm font-medium text-gray-500">Payment Terms</p>
-                  <p className="text-gray-700">{rfp.structuredData?.paymentTerms || 'Not specified'}</p>
-                </div>
-                <div>
-                  <p className="text-sm font-medium text-gray-500">Warranty</p>
-                  <p className="text-gray-700">
-                    {rfp.structuredData?.warrantyYears ? `${rfp.structuredData.warrantyYears} years` : 'Not specified'}
-                  </p>
-                </div>
+                {rfp.structuredData.items.slice(0, 5).map((item, index) => (
+                  <div key={index} className="p-3 bg-muted/50 rounded-lg border border-border/50">
+                    <h4 className="text-sm font-medium text-foreground">{item.name}</h4>
+                    <p className="text-xs text-muted-foreground">Qty: {item.quantity}</p>
+                  </div>
+                ))}
               </div>
-            </div>
+            ) : (
+              <p className="text-muted-foreground text-sm">No items specified</p>
+            )}
+          </CardContent>
+        </Card>
+      </div>
 
-            <div>
-              <h3 className="text-lg font-semibold text-gray-900 mb-3">Items Required</h3>
-              {rfp.structuredData.items && rfp.structuredData.items.length > 0 ? (
-                <div className="space-y-3">
-                  {rfp.structuredData.items.map((item, index) => (
-                    <div key={index} className="p-3 border border-gray-200 rounded-lg">
-                      <h4 className="font-medium text-gray-900">{item.name}</h4>
-                      <p className="text-sm text-gray-600">Quantity: {item.quantity}</p>
-                      {item.specifications && Object.keys(item.specifications).length > 0 && (
-                        <div className="mt-2">
-                          <p className="text-xs font-medium text-gray-500">Specifications:</p>
-                          <ul className="text-xs text-gray-600 ml-4">
-                            {Object.entries(item.specifications).map(([key, value]) => (
-                              <li key={key} className="capitalize">{key}: {String(value)}</li>
-                            ))}
-                          </ul>
-                        </div>
-                      )}
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                <p className="text-gray-600">No items specified</p>
-              )}
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Vendors Section */}
+      {/* Vendors */}
       <Card>
         <CardHeader>
-          <h2 className="text-lg font-semibold text-gray-900">Vendors</h2>
+          <h3 className="text-lg font-semibold text-foreground">Assigned Vendors ({rfp.vendors?.length || 0})</h3>
         </CardHeader>
         <CardContent>
           {rfp.vendors && rfp.vendors.length > 0 ? (
             <div className="space-y-3">
               {rfp.vendors.map((vendor) => (
-                <div key={vendor.id} className="flex items-center justify-between p-4 border border-gray-200 rounded-lg">
+                <div key={vendor.id} className="flex items-center justify-between p-3 bg-muted/30 rounded-lg">
                   <div className="flex items-center space-x-3">
-                    <div className="flex items-center justify-center w-10 h-10 bg-gray-100 rounded-lg">
-                      <Mail className="h-5 w-5 text-gray-600" />
+                    <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                      <Mail className="h-5 w-5 text-blue-600" />
                     </div>
-                    <div>
-                      <h3 className="font-medium text-gray-900">{vendor.name}</h3>
-                      <p className="text-sm text-gray-600">{vendor.email}</p>
-                      {vendor.sentAt && (
-                        <p className="text-xs text-gray-500">
-                          Sent {formatDate(vendor.sentAt)}
-                        </p>
-                      )}
+                    <div className="min-w-0">
+                      <h3 className="text-sm font-medium text-foreground">{vendor.name}</h3>
+                      <p className="text-xs text-muted-foreground truncate">{vendor.email}</p>
                     </div>
                   </div>
-                  <Badge variant={vendor.status === 'RESPONDED' ? 'default' : 'secondary'}>
+                  <Badge variant={vendor.status === "RESPONDED" ? "default" : "secondary"} className="flex-shrink-0">
                     {vendor.status}
                   </Badge>
                 </div>
@@ -211,72 +188,58 @@ const RFPDetailPage: React.FC = () => {
             </div>
           ) : (
             <div className="text-center py-8">
-              <Mail className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-              <h3 className="text-lg font-medium text-gray-900 mb-2">No vendors assigned</h3>
-              <p className="text-gray-600">Send this RFP to vendors to receive proposals</p>
+              <Mail className="h-12 w-12 text-muted-foreground/30 mx-auto mb-3" />
+              <p className="text-muted-foreground text-sm">No vendors assigned yet</p>
             </div>
           )}
         </CardContent>
       </Card>
 
-      {/* Proposals Section */}
+      {/* Proposals */}
       <Card>
         <CardHeader>
-          <h2 className="text-lg font-semibold text-gray-900">Proposals Received</h2>
+          <h3 className="text-lg font-semibold text-foreground">Proposals Received ({proposals.length})</h3>
         </CardHeader>
         <CardContent>
           {proposals.length > 0 ? (
             <div className="space-y-3">
               {proposals.map((proposal) => (
-                <div key={proposal.id} className="p-4 border border-gray-200 rounded-lg">
-                  <div className="flex items-center justify-between mb-2">
-                    <h3 className="font-medium text-gray-900">{proposal.vendorName}</h3>
-                    <div className="flex items-center space-x-2">
-                      <span className="text-sm font-medium text-gray-900">
-                        Score: {proposal.aiScore}/100
-                      </span>
-                      <Badge variant="default">AI Processed</Badge>
-                    </div>
+                <div key={proposal.id} className="p-4 bg-muted/30 rounded-lg border border-border/50">
+                  <div className="flex items-start justify-between mb-2">
+                    <h3 className="text-sm font-medium text-foreground">{proposal.vendorName}</h3>
+                    <Badge className="bg-blue-100 text-blue-700">Score: {proposal.aiScore}/100</Badge>
                   </div>
-                  <p className="text-sm text-gray-600 mb-2">
-                    Total: {formatCurrency(proposal.extractedData.totalPrice)} •
-                    Delivery: {proposal.extractedData.deliveryDays} days •
-                    Received: {formatDate(proposal.createdAt)}
-                  </p>
-                  <p className="text-sm text-gray-700 line-clamp-2">
-                    {proposal.aiEvaluation}
+                  <p className="text-xs text-muted-foreground">
+                    {formatCurrency(proposal.extractedData.totalPrice)} • {proposal.extractedData.deliveryDays}d
+                    delivery
                   </p>
                 </div>
               ))}
             </div>
           ) : (
             <div className="text-center py-8">
-              <FileText className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-              <h3 className="text-lg font-medium text-gray-900 mb-2">No proposals received</h3>
-              <p className="text-gray-600">
-                Proposals will appear here once vendors respond to your RFP
-              </p>
+              <FileText className="h-12 w-12 text-muted-foreground/30 mx-auto mb-3" />
+              <p className="text-muted-foreground text-sm">No proposals received yet</p>
             </div>
           )}
         </CardContent>
       </Card>
 
-      {/* Send RFP Modal */}
+      {/* Modals */}
       <SendRFPModal
         isOpen={showSendModal}
         onClose={() => setShowSendModal(false)}
         rfpId={id!}
-        rfpTitle={rfp?.title || ''}
+        rfpTitle={rfp?.title || ""}
       />
 
-      {/* Manual Proposal Form Modal */}
       <ManualProposalForm
         isOpen={showManualProposalForm}
         onClose={() => setShowManualProposalForm(false)}
         rfpId={id!}
       />
     </div>
-  );
-};
+  )
+}
 
-export default RFPDetailPage;
+export default RFPDetailPage

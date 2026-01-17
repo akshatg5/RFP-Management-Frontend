@@ -9,6 +9,11 @@ import {
 } from '../types/proposal.types';
 
 export const proposalService = {
+  // Get all proposals
+  getAllProposals: async (): Promise<ProposalListResponse> => {
+    return api.get('/proposals');
+  },
+
   // Get proposal by ID
   getProposalById: async (id: string): Promise<{ success: boolean; data: Proposal }> => {
     return api.get(`/proposals/${id}`);
@@ -37,5 +42,10 @@ export const proposalService = {
   // Delete proposal
   deleteProposal: async (id: string) => {
     return api.delete(`/proposals/${id}`);
+  },
+
+  // Get webhook events (received proposals)
+  getWebhookEvents: async (limit?: number) => {
+    return api.get(`/proposals/webhook-events${limit ? `?limit=${limit}` : ''}`);
   },
 };

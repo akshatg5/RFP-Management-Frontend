@@ -6,6 +6,7 @@ import CreateRFPPage from './pages/CreateRFPPage';
 import RFPDetailPage from './pages/RFPDetailPage';
 import VendorsPage from './pages/VendorsPage';
 import ComparisonPage from './pages/ComparisonPage';
+import VendorResponsesPage from './pages/VendorResponsesPage';
 
 function App() {
   return (
@@ -17,6 +18,7 @@ function App() {
           <Route path="/rfps/:id" element={<RFPDetailPage />} />
           <Route path="/rfps/:id/compare" element={<ComparisonPage />} />
           <Route path="/vendors" element={<VendorsPage />} />
+          <Route path="/vendor-responses" element={<VendorResponsesPage />} />
         </Routes>
     </Layout>
   );
