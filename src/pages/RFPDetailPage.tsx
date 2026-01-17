@@ -1,7 +1,7 @@
 import type React from "react"
 import { useState } from "react"
 import { useParams, Link } from "react-router-dom"
-import { ArrowLeft, Send, BarChart3, FileText, DollarSign, Calendar, Users, Mail, Plus, RefreshCw, AlertCircle, RotateCw } from "lucide-react"
+import { ArrowLeft, Send, BarChart3, FileText, DollarSign, Calendar, Users, Mail, Plus, RefreshCw, AlertCircle, RotateCw, Trash2 } from "lucide-react"
 import Loading from "../components/common/Loading"
 import ErrorMessage from "../components/common/ErrorMessage"
 import SendRFPModal from "../components/rfp/SendRFPModal"
@@ -9,6 +9,7 @@ import ManualProposalForm from "../components/proposal/ManualProposalForm"
 import { useRFPWithVendors, useCheckProposals } from "../hooks/useRFPs"
 import { useProposals as useProposalData } from "../hooks/useProposals"
 import { useUnprocessedEmails, useReparseEmail } from "../hooks/useEmails"
+import { useDeleteProposal } from "../hooks/useProposals"
 import { formatCurrency } from "../utils/formatters"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader } from "@/components/ui/card"
@@ -21,6 +22,7 @@ const RFPDetailPage: React.FC = () => {
   const checkProposals = useCheckProposals()
   const { data: unprocessedEmailsData } = useUnprocessedEmails(id)
   const reparseEmail = useReparseEmail()
+  const deleteProposal = useDeleteProposal()
 
   const [showSendModal, setShowSendModal] = useState(false)
   const [showManualProposalForm, setShowManualProposalForm] = useState(false)
@@ -253,6 +255,20 @@ const RFPDetailPage: React.FC = () => {
                           Re-parse
                         </Button>
                       )}
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => {
+                          if (window.confirm(`Delete proposal from ${proposal.vendorName}?`)) {
+                            deleteProposal.mutate(proposal.id);
+                          }
+                        }}
+                        disabled={deleteProposal.isPending}
+                        className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                      >
+                        <Trash2 className="h-3 w-3 mr-1" />
+                        Delete
+                      </Button>
                     </div>
                   </div>
                   <p className="text-xs text-muted-foreground">
