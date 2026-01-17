@@ -47,7 +47,7 @@ export interface ProposalComparisonResponse {
     rfpId: string;
     rfpTitle: string;
     proposals: Proposal[];
-    aiRecommendation: {
+    aiRecommendations?: {
       recommendedVendorId: string;
       reasoning: string;
       comparisonSummary: string;

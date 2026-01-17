@@ -35,7 +35,7 @@ const ComparisonPage: React.FC = () => {
   }
 
   const { proposals } = comparison
-  const aiRecommendation = comparison.aiRecommendation
+  const aiRecommendation = comparison.aiRecommendations
 
   if (!proposals || proposals.length === 0) {
     return (
