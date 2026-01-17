@@ -1,12 +1,12 @@
 import type React from "react"
 import { useState } from "react"
 import { useParams, Link } from "react-router-dom"
-import { ArrowLeft, Send, BarChart3, FileText, DollarSign, Calendar, Users, Mail, Plus } from "lucide-react"
+import { ArrowLeft, Send, BarChart3, FileText, DollarSign, Calendar, Users, Mail, Plus, RefreshCw } from "lucide-react"
 import Loading from "../components/common/Loading"
 import ErrorMessage from "../components/common/ErrorMessage"
 import SendRFPModal from "../components/rfp/SendRFPModal"
 import ManualProposalForm from "../components/proposal/ManualProposalForm"
-import { useRFPWithVendors } from "../hooks/useRFPs"
+import { useRFPWithVendors, useCheckProposals } from "../hooks/useRFPs"
 import { useProposals as useProposalData } from "../hooks/useProposals"
 import { formatCurrency } from "../utils/formatters"
 import { Button } from "@/components/ui/button"
@@ -17,6 +17,7 @@ const RFPDetailPage: React.FC = () => {
   const { id } = useParams<{ id: string }>()
   const { data: rfpData, isLoading, error } = useRFPWithVendors(id!)
   const { data: proposalsData } = useProposalData(id!)
+  const checkProposals = useCheckProposals()
 
   const [showSendModal, setShowSendModal] = useState(false)
   const [showManualProposalForm, setShowManualProposalForm] = useState(false)
@@ -198,7 +199,18 @@ const RFPDetailPage: React.FC = () => {
       {/* Proposals */}
       <Card>
         <CardHeader>
-          <h3 className="text-lg font-semibold text-foreground">Proposals Received ({proposals.length})</h3>
+          <div className="flex items-center justify-between">
+            <h3 className="text-lg font-semibold text-foreground">Proposals Received ({proposals.length})</h3>
+            <Button 
+              variant="outline" 
+              size="sm"
+              onClick={() => checkProposals.mutate(id!)}
+              disabled={checkProposals.isPending}
+            >
+              <RefreshCw className={`h-4 w-4 mr-2 ${checkProposals.isPending ? 'animate-spin' : ''}`} />
+              {checkProposals.isPending ? 'Checking...' : 'Check for Proposals'}
+            </Button>
+          </div>
         </CardHeader>
         <CardContent>
           {proposals.length > 0 ? (

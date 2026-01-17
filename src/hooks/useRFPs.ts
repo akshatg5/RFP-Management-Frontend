@@ -26,6 +26,15 @@ export const useRFPWithVendors = (id: string) => {
   });
 };
 
+export const usePreviewRFP = () => {
+  return useMutation({
+    mutationFn: (data: CreateRFPRequest) => rfpService.previewRFP(data),
+    onError: (error: Error) => {
+      toast.error(`Failed to preview RFP: ${error.message}`);
+    },
+  });
+};
+
 export const useCreateRFP = () => {
   const queryClient = useQueryClient();
 
@@ -70,6 +79,29 @@ export const useDeleteRFP = () => {
     },
     onError: (error: Error) => {
       toast.error(`Failed to delete RFP: ${error.message}`);
+    },
+  });
+};
+
+export const useCheckProposals = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (id: string) => rfpService.checkForProposals(id),
+    onSuccess: (response, id) => {
+      const result = response.data;
+      queryClient.invalidateQueries({ queryKey: ['proposals', id] });
+      
+      if (result.processedCount > 0) {
+        toast.success(`Found and processed ${result.processedCount} new proposal(s)!`);
+      } else if (result.errors.length > 0 && result.errors[0].includes('haven\'t responded')) {
+        toast.success(result.errors[0]);
+      } else {
+        toast.success(`All vendors have responded or webhook will process inbound emails automatically.`);
+      }
+    },
+    onError: (error: Error) => {
+      toast.error(`Failed to check proposals: ${error.message}`);
     },
   });
 };

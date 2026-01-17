@@ -3,19 +3,20 @@ import { useState } from "react"
 import { useNavigate } from "react-router-dom"
 import { ArrowLeft, Wand2, FileText, Save, X } from "lucide-react"
 import ErrorMessage from "../components/common/ErrorMessage"
-import { useCreateRFP } from "../hooks/useRFPs"
+import { useCreateRFP, usePreviewRFP } from "../hooks/useRFPs"
 import { validateRFPData } from "../utils/validators"
 import { formatCurrency } from "../utils/formatters"
-import type { RFP } from "../types/rfp.types"
+import type { StructuredRFP } from "../types/rfp.types"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader } from "@/components/ui/card"
 
 const CreateRFPPage: React.FC = () => {
   const navigate = useNavigate()
+  const previewRFP = usePreviewRFP()
   const createRFP = useCreateRFP()
 
   const [naturalLanguagePrompt, setNaturalLanguagePrompt] = useState("")
-  const [generatedRFP, setGeneratedRFP] = useState<RFP | null>(null)
+  const [generatedRFP, setGeneratedRFP] = useState<StructuredRFP | null>(null)
   const [validationErrors, setValidationErrors] = useState<string[]>([])
 
   const handleGenerateRFP = async () => {
@@ -28,16 +29,21 @@ const CreateRFPPage: React.FC = () => {
     setValidationErrors([])
 
     try {
-      const response = await createRFP.mutateAsync({ naturalLanguagePrompt })
+      const response = await previewRFP.mutateAsync({ naturalLanguagePrompt })
       setGeneratedRFP(response.data)
     } catch (error) {
       // Error is handled by the hook
     }
   }
 
-  const handleSaveRFP = () => {
-    if (generatedRFP) {
-      navigate(`/rfps/${generatedRFP.id}`)
+  const handleSaveRFP = async () => {
+    if (generatedRFP && naturalLanguagePrompt) {
+      try {
+        const response = await createRFP.mutateAsync({ naturalLanguagePrompt })
+        navigate(`/rfps/${response.data.id}`)
+      } catch (error) {
+        // Error is handled by the hook
+      }
     }
   }
 
@@ -99,7 +105,7 @@ const CreateRFPPage: React.FC = () => {
 
               <Button onClick={handleGenerateRFP} className="w-full" disabled={!naturalLanguagePrompt.trim()} size="lg">
                 <Wand2 className="h-4 w-4 mr-2" />
-                {createRFP.isPending ? "Generating RFP..." : "Generate RFP with AI"}
+                {previewRFP.isPending ? "Generating RFP..." : "Generate RFP with AI"}
               </Button>
             </div>
           </CardContent>
@@ -124,18 +130,18 @@ const CreateRFPPage: React.FC = () => {
                   Enter your requirements and click "Generate RFP" to see the preview
                 </p>
               </div>
-            ) : createRFP.isError ? (
+            ) : previewRFP.isError ? (
               <ErrorMessage
                 title="Failed to generate RFP"
-                message={createRFP.error?.message || "An error occurred"}
+                message={previewRFP.error?.message || "An error occurred"}
                 onRetry={handleGenerateRFP}
               />
             ) : (
               <div className="space-y-6">
                 {/* Title and Description */}
                 <div>
-                  <h3 className="text-xl font-bold text-foreground mb-2">{generatedRFP.structuredData.title}</h3>
-                  <p className="text-sm text-muted-foreground">{generatedRFP.structuredData.description}</p>
+                  <h3 className="text-xl font-bold text-foreground mb-2">{generatedRFP.title}</h3>
+                  <p className="text-sm text-muted-foreground">{generatedRFP.description}</p>
                 </div>
 
                 {/* Key Details */}
@@ -143,39 +149,39 @@ const CreateRFPPage: React.FC = () => {
                   <div>
                     <p className="text-xs font-medium text-muted-foreground">Budget</p>
                     <p className="text-lg font-semibold text-foreground mt-1">
-                      {generatedRFP.structuredData.budget ? formatCurrency(generatedRFP.structuredData.budget) : "N/A"}
+                      {generatedRFP.budget ? formatCurrency(generatedRFP.budget) : "N/A"}
                     </p>
                   </div>
                   <div>
                     <p className="text-xs font-medium text-muted-foreground">Delivery</p>
                     <p className="text-lg font-semibold text-foreground mt-1">
-                      {generatedRFP.structuredData.deliveryDays
-                        ? `${generatedRFP.structuredData.deliveryDays}d`
+                      {generatedRFP.deliveryDays
+                        ? `${generatedRFP.deliveryDays}d`
                         : "N/A"}
                     </p>
                   </div>
                   <div>
                     <p className="text-xs font-medium text-muted-foreground">Payment</p>
                     <p className="text-lg font-semibold text-foreground mt-1">
-                      {generatedRFP.structuredData.paymentTerms || "N/A"}
+                      {generatedRFP.paymentTerms || "N/A"}
                     </p>
                   </div>
                   <div>
                     <p className="text-xs font-medium text-muted-foreground">Warranty</p>
                     <p className="text-lg font-semibold text-foreground mt-1">
-                      {generatedRFP.structuredData.warrantyYears
-                        ? `${generatedRFP.structuredData.warrantyYears}y`
+                      {generatedRFP.warrantyYears
+                        ? `${generatedRFP.warrantyYears}y`
                         : "N/A"}
                     </p>
                   </div>
                 </div>
 
                 {/* Items */}
-                {generatedRFP.structuredData.items && generatedRFP.structuredData.items.length > 0 && (
+                {generatedRFP.items && generatedRFP.items.length > 0 && (
                   <div>
                     <h4 className="text-md font-semibold text-foreground mb-3">Items Required</h4>
                     <div className="space-y-2 max-h-32 overflow-y-auto">
-                      {generatedRFP.structuredData.items.map((item, index) => (
+                      {generatedRFP.items.map((item: any, index: number) => (
                         <div key={index} className="p-2 bg-muted/50 rounded border border-border/50">
                           <p className="text-sm font-medium text-foreground">{item.name}</p>
                           <p className="text-xs text-muted-foreground">Qty: {item.quantity}</p>
@@ -187,9 +193,9 @@ const CreateRFPPage: React.FC = () => {
 
                 {/* Action Buttons */}
                 <div className="flex gap-3 pt-4 border-t border-border">
-                  <Button onClick={handleSaveRFP} className="flex-1" size="lg">
+                  <Button onClick={handleSaveRFP} className="flex-1" size="lg" disabled={createRFP.isPending}>
                     <Save className="h-4 w-4 mr-2" />
-                    Save RFP
+                    {createRFP.isPending ? "Saving..." : "Save RFP"}
                   </Button>
                   <Button variant="outline" onClick={handleCancel} size="lg">
                     <X className="h-4 w-4 mr-2" />

@@ -7,9 +7,15 @@ import {
   RFPWithVendors,
   SendRFPRequest,
   SendRFPResponse,
+  StructuredRFP,
 } from '../types/rfp.types';
 
 export const rfpService = {
+  // Preview RFP structure without saving to database
+  previewRFP: async (data: CreateRFPRequest): Promise<{ success: boolean; data: StructuredRFP }> => {
+    return api.post('/rfps/preview', data);
+  },
+
   // Create a new RFP from natural language
   createRFP: async (data: CreateRFPRequest): Promise<CreateRFPResponse> => {
     return api.post('/rfps', data);
@@ -38,6 +44,11 @@ export const rfpService = {
   // Compare proposals for an RFP
   compareProposals: async (id: string) => {
     return api.get(`/rfps/${id}/compare`);
+  },
+
+  // Manually check for proposals in recent emails
+  checkForProposals: async (id: string) => {
+    return api.post(`/rfps/${id}/check-proposals`);
   },
 
   // Delete RFP
