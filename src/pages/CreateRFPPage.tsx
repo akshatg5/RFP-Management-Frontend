@@ -1,4 +1,3 @@
-```
 import type React from "react"
 import { useState } from "react"
 import { useNavigate } from "react-router-dom"
@@ -47,11 +46,7 @@ const CreateRFPPage: React.FC = () => {
       }
     }
   }
-
-  const handleCancel = () => {
-    navigate("/rfps")
-  }
-
+  
   return (
     <div className="space-y-6">
       {/* Header */}
