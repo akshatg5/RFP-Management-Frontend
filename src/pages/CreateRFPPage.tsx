@@ -1,7 +1,8 @@
+```
 import type React from "react"
 import { useState } from "react"
 import { useNavigate } from "react-router-dom"
-import { ArrowLeft, Wand2, FileText, Save, X } from "lucide-react"
+import { ArrowLeft, Wand2, FileText, Save, Loader2 } from "lucide-react"
 import ErrorMessage from "../components/common/ErrorMessage"
 import { useCreateRFP, usePreviewRFP } from "../hooks/useRFPs"
 import { validateRFPData } from "../utils/validators"
@@ -192,14 +193,25 @@ const CreateRFPPage: React.FC = () => {
                 )}
 
                 {/* Action Buttons */}
-                <div className="flex gap-3 pt-4 border-t border-border">
-                  <Button onClick={handleSaveRFP} className="flex-1" size="lg" disabled={createRFP.isPending}>
+                <div className="flex justify-end space-x-3 pt-4 border-t border-border">
+                  <Button 
+                    variant="outline" 
+                    onClick={() => {
+                      setGeneratedRFP(null);
+                      setNaturalLanguagePrompt("");
+                    }}
+                  >
+                    Clear
+                  </Button>
+                  <Button 
+                    onClick={handleSaveRFP}
+                    disabled={createRFP.isPending}
+                  >
+                    {createRFP.isPending && (
+                      <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                    )}
                     <Save className="h-4 w-4 mr-2" />
                     {createRFP.isPending ? "Saving..." : "Save RFP"}
-                  </Button>
-                  <Button variant="outline" onClick={handleCancel} size="lg">
-                    <X className="h-4 w-4 mr-2" />
-                    Cancel
                   </Button>
                 </div>
               </div>

@@ -186,7 +186,15 @@ const VendorsPage: React.FC = () => {
               )}
 
               <div className="flex space-x-3 pt-4">
-                <Button type="submit">{editingVendor ? "Update Vendor" : "Add Vendor"}</Button>
+                <Button 
+                  type="submit"
+                  disabled={createVendor.isPending || updateVendor.isPending}
+                >
+                  {(createVendor.isPending || updateVendor.isPending) && (
+                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                  )}
+                  {editingVendor ? "Update Vendor" : "Add Vendor"}
+                </Button>
                 <Button type="button" variant="outline" onClick={handleCancel}>
                   Cancel
                 </Button>

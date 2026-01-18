@@ -187,11 +187,14 @@ const SendRFPModal: React.FC<SendRFPModalProps> = ({
           <div className="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
             <Button
               onClick={handleSend}
-              disabled={selectedVendorIds.length === 0}
+              disabled={selectedVendorIds.length === 0 || sendRFP.isPending}
               className="w-full sm:w-auto sm:ml-3"
             >
-              <Mail className="h-4 w-4 mr-2" />
-              Send to {selectedVendorIds.length} Vendor{selectedVendorIds.length !== 1 ? 's' : ''}
+              <Mail className={`h-4 w-4 mr-2 ${sendRFP.isPending ? 'animate-spin' : ''}`} />
+              {sendRFP.isPending 
+                ? 'Sending...' 
+                : `Send to ${selectedVendorIds.length} Vendor${selectedVendorIds.length !== 1 ? 's' : ''}`
+              }
             </Button>
             <Button
               variant="outline"
